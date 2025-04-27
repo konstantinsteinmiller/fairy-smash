@@ -27,7 +27,7 @@ export default () => {
     '/images/crosshair/crosshair-transparent.avif',
     '/images/crosshair/crosshair-stars.png',
     '/images/crosshair/crosshair-dots.avif',
-    '/images/logo/Zora_logo_512x512.png',
+    '/images/logo/fairy-smash-royale_logo_512x512.png',
     '/worlds/city-1/city-1.comp.glb',
     '/worlds/city-1/city-1-houses.comp.glb',
     '/worlds/city-1/city-1-navmesh.fbx',
