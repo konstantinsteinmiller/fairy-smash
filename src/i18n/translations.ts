@@ -1,6 +1,6 @@
 export default {
   en: {
-    gameName: 'Zora',
+    gameName: 'Fairy Smash Royale',
     cancel: 'Cancel',
     close: 'Close',
     understood: 'Understood',
@@ -24,7 +24,7 @@ export default {
     },
   },
   de: {
-    gameName: 'Zora',
+    gameName: 'Fairy Smash Royale',
     cancel: 'Abbrechen',
     close: 'Schließen',
     understood: 'Verstanden',
