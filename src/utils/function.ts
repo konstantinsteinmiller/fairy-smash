@@ -162,3 +162,7 @@ export const mergeObjectsRecursive = (obj1: any, obj2: any) => {
 
   return obj1
 }
+
+export const getChargeDuration = (entity: any) => {
+  return DEFAULT_CHARGE_DURATION / entity.currentSpell.speed
+}
