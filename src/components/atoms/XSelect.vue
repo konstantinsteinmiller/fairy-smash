@@ -6,7 +6,7 @@
       class="w-48 !py-1 !px-3"
       :class="{
         'glass ': true,
-        '!cursor-none': IS_ZORA,
+        '!cursor-none': IS_FAIRY_SMASH_ROYALE,
       }"
     >
       <option
@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { IS_ZORA } from '@/utils/constants.ts'
+import { IS_FAIRY_SMASH_ROYALE } from '@/utils/constants.ts'
 import { v4 as uuidv4 } from 'uuid'
 
 defineProps({

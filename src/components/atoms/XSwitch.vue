@@ -5,7 +5,7 @@
       type="checkbox"
       class="sr-only peer"
       :class="{
-        '!cursor-none': IS_ZORA,
+        '!cursor-none': IS_FAIRY_SMASH_ROYALE,
       }"
       @change="() => emit('change', model)"
     />
@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { IS_ZORA } from '@/utils/constants.ts'
+import { IS_FAIRY_SMASH_ROYALE } from '@/utils/constants.ts'
 
 defineProps({
   title: {

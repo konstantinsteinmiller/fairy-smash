@@ -3,7 +3,7 @@
     :value="model"
     :class="{
       glass: true,
-      '!cursor-none': IS_ZORA,
+      '!cursor-none': IS_FAIRY_SMASH_ROYALE,
     }"
     :placeholder="placeholder"
     @click="emit('click', $event)"
@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { IS_ZORA } from '@/utils/constants.ts'
+import { IS_FAIRY_SMASH_ROYALE } from '@/utils/constants.ts'
 
 defineProps({
   isSelectAll: {

@@ -1,4 +1,4 @@
-import type { Vector3 } from 'three'
+import type {Quaternion, Vector3} from 'three'
 
 interface vec3 {
   x: number
@@ -23,3 +23,12 @@ export interface ClosestPortal {
   exitGroupId: number
   distance: number
 }
+
+export interface WP {
+  name: string
+  type?: string
+  position: Vector3
+  quaternion: Quaternion
+}
+
+export type SpawnPoint = 'player' | 'power' | 'buff' | 'heal' | 'dust'
