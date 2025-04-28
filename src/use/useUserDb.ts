@@ -2,7 +2,6 @@ import type { Ref } from 'vue'
 import useMatch from '@/use/useMatch'
 import clonedeep from 'lodash.clonedeep'
 
-const { isSplashScreenVisible, isDbInitialized } = useMatch()
 
 let db: any
 
@@ -17,6 +16,7 @@ const useUserDb = ({
   userLanguage: Ref<string>
   userTutorialsDoneMap: Ref<string>
 }) => {
+  const { isSplashScreenVisible, isDbInitialized } = useMatch()
   // Open our database; it is created if it doesn't already exist
   const request = window.indexedDB.open('user_db', 1)
 

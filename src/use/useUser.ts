@@ -21,14 +21,14 @@ watch(
   { deep: true, once: true }
 )
 
-const { storeUser } = useUserDb({
-  userSoundVolume,
-  userMusicVolume,
-  userLanguage,
-  userTutorialsDoneMap,
-})
 
 const useUser = () => {
+  const { storeUser } = useUserDb({
+    userSoundVolume,
+    userMusicVolume,
+    userLanguage,
+    userTutorialsDoneMap,
+  })
   const setSettingValue = (name: string, value: any) => {
     if (name === 'language') {
       value = `'${value}'`

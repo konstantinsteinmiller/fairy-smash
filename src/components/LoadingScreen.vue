@@ -5,8 +5,8 @@
   >
     <img
       class="absolute top-1 left-4 w-16 h-16 z-[102]"
-      src="/images/logo/fairy-smash-royale_logo_512x512.png"
-      alt="Zora logo"
+      src="/images/logo/fairy-smash-royale-logo_256x256.png"
+      alt="logo"
     />
     <img
       class="absolute top-0 left-0 w-full h-full"
@@ -26,7 +26,6 @@ import Arena from '@/Arena.ts'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FileLoader from '@/engine/FileLoader.ts'
 import $ from '@/global'
-import LevelStartup from '@/LevelStartup.ts'
 import useMatch from '@/use/useMatch.ts'
 import useUser from '@/use/useUser.ts'
 import { LEVELS, TUTORIALS } from '@/utils/enums.ts'
@@ -49,13 +48,10 @@ let current: ComputedRef<number> | number = fileLoader.currentlyLoadedPercent
 const { levelType } = useMatch()
 const { tutorialPhase } = useUser()
 const isArena = props.level.includes('-arena')
-const isWorld = props.level.includes('city') || props.level.includes('world')
 
 onMounted(() => {
   if (isArena) {
     levelType.value = LEVELS.ARENA
-  } else if (isWorld) {
-    levelType.value = LEVELS.WORLD
   }
 
   let hasExecutedInit = false
@@ -86,11 +82,8 @@ onMounted(() => {
     $.sounds.loadSounds()
 
     switch (props.level) {
-      case 'water-arena':
-        Arena('water-arena')
-        break
-      case 'city-1':
-        LevelStartup('city-1')
+      case 'mountain-arena':
+        Arena('mountain-arena')
         break
       default:
         break

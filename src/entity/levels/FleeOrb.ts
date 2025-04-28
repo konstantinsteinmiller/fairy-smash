@@ -15,7 +15,7 @@ export default async (position: Vector3) => {
   })
 
   const collidable: any = CollidableItem({
-    name: 'fairy-dust',
+    name: name,
     meshPath: '',
     size: 3,
     onCollisionStart: (_colliderA, _colliderB, _uuid, entity) => {

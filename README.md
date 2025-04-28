@@ -1,8 +1,8 @@
-![fairy-smash-royale banner](https://github.com/konstantinsteinmiller/smash-royale/blob/master/src/assets/documentation/SmashRoyale_banner_1331x430.jpg)
+![fairy-smash-royale banner](https://github.com/konstantinsteinmiller/smash-royale/blob/master/src/assets/documentation/fairy-smash-royale-banner_1331x430.jpg)
 
 # Fairy Smash Royale
 
-A fantasy 3d live-action arena battler. Choose a fairy and start shooting enemies to collect fairy dust. 
+A multiplayer fantasy 3d live-action arena battler. Choose a fairy and start shooting enemies to collect fairy dust. 
 Fairy dust is used to buy more spells and fairies.
 Created in three.js + rapier.js + three-nebula.js + Vue.js
 <div style="display: flex; justify-items: center;">
@@ -25,6 +25,7 @@ expected features:
 - Spells and moving particle effects with three-nebula.js
 - UI for health, mana, endurance and enemy health
 - charging spell indicator
+- Multiplayer with up to 8 players using Photon
 
 Meshes generated with [meshy.ai](https://www.meshy.ai/workspace) - 
 Music generated with [Tem.Polor](https://www.tempolor.com/) -

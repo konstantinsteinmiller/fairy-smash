@@ -3,8 +3,8 @@
   <template v-if="!isBattleOver">
     <img
       class="absolute top-1 left-4 w-16 h-16"
-      src="/images/logo/fairy-smash-royale_logo_512x512.png"
-      alt="Zora logo"
+      src="/images/logo/fairy-smash-royale-logo_256x256.png"
+      alt="logo"
     />
     <StatBar
       owner-id="enemy"

@@ -3,6 +3,7 @@ import { BoxGeometry, Mesh, MeshBasicMaterial, Vector3 } from 'three'
 import * as THREE from 'three'
 import $ from '@/global'
 import { inverseLerp, lerp } from 'three/src/math/MathUtils.js'
+import {DEFAULT_CHARGE_DURATION} from "@/utils/constants.ts";
 
 const createColliderGeo = (geo: any, rigidBody: any, physic: any) => {
   const vertices = new Float32Array(geo.attributes.position.array)

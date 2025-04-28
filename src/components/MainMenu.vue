@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import LoadingBar from '@/components/LoadingBar.vue'
-import MessageManager from '@/components/molecules/MessageManager.vue'
 import { spraySprincles } from '@/control/KeyboardController.ts'
 import Camera from '@/engine/Camera.ts'
 import FileLoader from '@/engine/FileLoader.ts'
@@ -13,9 +12,7 @@ import { findPointer, onUnlockedMouseMove, showCustomPointer } from '@/utils/fin
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import OptionsModal from '@/components/OptionsModal.vue'
-import TutorialPopover from '@/components/TutorialPopover.vue'
 import XButton from '@/components/atoms/XButton.vue'
-import Menu from '@/components/organisms/Menu.vue'
 import { useRoute } from 'vue-router'
 
 const { isStartingGame } = useMatch()
@@ -30,12 +27,7 @@ showCustomPointer()
 
 const startArena = () => {
   isStartingGame.value = true
-  router.push({ name: 'battle', params: { worldId: 'water-arena' }, query: route.query })
-}
-
-const startWorld = () => {
-  isStartingGame.value = true
-  router.push({ name: 'world', params: { worldId: 'city-1' }, query: route.query })
+  router.push({ name: 'battle', params: { worldId: 'mountain-arena' }, query: route.query })
 }
 
 const onExit = () => {
@@ -53,7 +45,7 @@ setPointer()
 !$.fileLoader && FileLoader()
 !$.camera && Camera()
 
-const { preloadAssets, loadingProgress, worldLoadingProgress } = useAssets()
+const { preloadAssets, loadingProgress } = useAssets()
 
 const game$: any = document.querySelector('.game')
 
@@ -85,15 +77,15 @@ onUnmounted(() => {
       alt="loading-screen-artwork"
     />
 
-    <div class="relative top-0 left-0 bg-[#050505] flex justify-center items-start w-full h-[200px]">
+    <div class="relative top-4 left-0 bg-transparent flex justify-center items-start w-full h-[200px]">
       <img
-        class="w-[700px] h-[200px] z-[5]"
-        src="@/assets/documentation/Zora_banner_1331x430.jpg"
-        alt="Zora logo"
+        class="w-auto h-[200px] z-[5]"
+        src="@/assets/documentation/fairy-smash-royale-banner_609x372.png"
+        alt="logo"
       />
     </div>
 
-    <div class="flex w-full my-3 mt-1">
+    <div class="flex w-full my-3 mt-1 mt-8">
       <div class="mx-auto">
         <div class="flex justify-center">
           <XButton
@@ -103,17 +95,6 @@ onUnmounted(() => {
             @keydown.enter="startArena"
           >
             {{ t('startArena') }}
-          </XButton>
-        </div>
-
-        <div class="flex justify-center">
-          <XButton
-            class="with-bg mt-3 leading-[1rem]"
-            :disabled="worldLoadingProgress < 99.8"
-            @click="startWorld"
-            @keydown.enter="startWorld"
-          >
-            {{ t('startWorld') }}
           </XButton>
         </div>
 
@@ -143,8 +124,6 @@ onUnmounted(() => {
       </div>
     </div>
     <LoadingBar />
-
-    <Menu v-if="$.isDebug" />
   </div>
 </template>
 
