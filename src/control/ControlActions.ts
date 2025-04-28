@@ -1,4 +1,3 @@
-import useInteraction from '@/use/useInteraction.ts'
 import useMatch from '@/use/useMatch.ts'
 import useUser from '@/use/useUser.ts'
 import { FLY_COST, MAX_FLY_IMPULSE } from '@/utils/constants.ts'
@@ -46,7 +45,6 @@ const toggleMenu = (hasChanged, menuId) => {
 export default (defaultControlsConfig: EnumStringToList) => {
   const { levelType } = useMatch()
 
-  const { interactionId, hideInteraction } = useInteraction()
   // const map = getActionEventsMap(defaultControlsConfig)
   const map: ActionFunctionMap = {
     attack: {
@@ -197,7 +195,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
   }
 
   Object.keys(defaultControlsConfig).forEach((action: string) => {
-    if (typeof map[action].onActivate === 'string') {
+    if (typeof map[action]?.onActivate === 'string' || !map[action]?.onActivate) {
       console.warn(`Missing implementation for action: ${action}`)
     }
   })

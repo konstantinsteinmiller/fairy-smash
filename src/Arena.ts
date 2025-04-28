@@ -6,7 +6,7 @@ import type { Guild } from '@/types/entity.ts'
 import { Vector3 } from 'three'
 import World from '@/entity/World'
 import Crosshair from '@/entity/Crosshair'
-import {assetManager} from "@/engine/AssetLoader.ts";
+import { assetManager } from '@/engine/AssetLoader.ts'
 
 const Arena = async (level: string, players: number = 1) => {
   World(level, () => {
@@ -16,7 +16,7 @@ const Arena = async (level: string, players: number = 1) => {
     const positions = $.level.pathfinder.startPositions.slice(0)
     let playerCount = players
     const getRandomStartPoints = () => {
-      while(playerCount > 0) {
+      while (playerCount > 0) {
         const playerSpawnPointsAmount = positions.length
         const randomStartPos = Math.floor(Math.random() * playerSpawnPointsAmount)
         startingPositions.push(positions[randomStartPos])
@@ -27,11 +27,9 @@ const Arena = async (level: string, players: number = 1) => {
       }
     }
     getRandomStartPoints()
-
     ;[...Array(players)].forEach((_player: any, index: number) => {
       const startWp = startingPositions.shift()
       const startPos = startWp?.position
-      console.log('startPos: ', startPos)
 
       ArenaPlayerController({
         modelPath: '/models/thunder-fairy-1/thunder-fairy-1.fbx',
@@ -48,7 +46,6 @@ const Arena = async (level: string, players: number = 1) => {
         guild: 'guild-0' as Guild,
       })
     })
-
 
     // AIController({
     //   modelPath: '/models/nature-fairy-1/nature-fairy-1.fbx',

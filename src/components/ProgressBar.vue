@@ -41,10 +41,10 @@ const deg = computed(() => lerp(0, 360, props.current / 100))
 const degree = computed(() => `${deg.value}deg`)
 const percent = computed(() => +props.current)
 const percentStr = computed(() => `${percent.value}%`)
-const startC = ref(new Color().lerpColors(new Color('gold'), new Color('#AF47FA'), 0.02))
+const startC = ref(new Color().lerpColors(new Color('#FDC6D5'), new Color('#FDC6D5'), 0.02))
 const startColor = ref(`#${startC.value.getHexString()}`)
 const intermediateColor = computed(() => {
-  return deg.value < 15 && deg.value > 0 ? 'transparent' : `#AF47FA`
+  return deg.value < 15 && deg.value > 0 ? 'transparent' : `#FDC6D5`
 })
 </script>
 
@@ -58,7 +58,7 @@ const intermediateColor = computed(() => {
   mask-image: radial-gradient(circle 2rem at center, transparent 99%, black 100%)
 .inner
   box-shadow: inset 4px 4px 6px -1px rgba(0, 0, 0, 0.2), -4px -4px 6px -1px rgba(255, 255, 255, 0.2), -0.5px -0.5px 0px rgba(255, 255, 255, 1), 0.5px 0.5px 0px rgba(0, 0, 0, 0.15), 0px 12px 10px -10px rgba(0, 0, 0, 0.05),
-  background: conic-gradient(from 0deg, var(--glass-gradient-1) 0%, var(--glass-gradient-2) v-bind(percentStr), transparent v-bind(percentStr), transparent 100%)
+  background: conic-gradient(from 0deg, var(--vue-gradient-1) 0%, var(--vue-gradient-2) v-bind(percentStr), transparent v-bind(percentStr), transparent 100%)
   margin: 1px
   mask-image: radial-gradient(circle 2rem at center, transparent 99%, black 100%)
 .inner-circle.glass
@@ -78,12 +78,12 @@ const intermediateColor = computed(() => {
   border-radius: 50%
 
   transform: translate(-50%, -100%) rotate(v-bind(degree))
-  background: conic-gradient(from 0deg, var(--glass-gradient-2) 51%, v-bind(intermediateColor) 51%, v-bind(intermediateColor) 99%, var(--glass-gradient-2) 100%)
+  background: conic-gradient(from 0deg, var(--vue-gradient-2) 51%, v-bind(intermediateColor) 51%, v-bind(intermediateColor) 99%, var(--vue-gradient-2) 100%)
 .pin2
   z-index: 99
   top: 1rem
   width: 15px
   left: 50.5%
   transform: translate(-50%, -100%) rotate(0)
-  background: radial-gradient(circle 0.5rem at center, var(--glass-gradient-1) 50%,v-bind(startColor)  100%)
+  background: radial-gradient(circle 0.5rem at center, var(--vue-gradient-1) 50%,v-bind(startColor)  100%)
 </style>

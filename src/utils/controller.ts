@@ -14,7 +14,7 @@ import {
 } from '@/utils/constants.ts'
 import $ from '@/global'
 import type { ControllerUtils } from '@/types/entity.ts'
-import { getChargeDuration } from '@/utils/chargeUtils.ts'
+import { getChargeDuration } from '@/utils/function.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { createDebugBox, createRayTrace, remap } from '@/utils/function.ts'
 import { removePath } from '@/utils/navigation.ts'
@@ -60,6 +60,7 @@ export const getBaseStats: any = () => ({
   },
   currency: {
     fairyDust: 0,
+    powerUp: 0,
   },
   fairies: {
     fairiesList: ref<Fairy[]>([]),
