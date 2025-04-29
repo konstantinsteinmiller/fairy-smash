@@ -9,11 +9,13 @@ import $ from '@/global'
 import useAssets from '@/use/useAssets.ts'
 import useMatch from '@/use/useMatch.ts'
 import { findPointer, onUnlockedMouseMove, showCustomPointer } from '@/utils/find-pointer.ts'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, type Ref, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import OptionsModal from '@/components/OptionsModal.vue'
 import XButton from '@/components/atoms/XButton.vue'
 import { useRoute } from 'vue-router'
+import { client } from '@/utils/mpClient.ts'
+import RoomsModal from "@/components/RoomsModal.vue";
 
 const { isStartingGame } = useMatch()
 const route = useRoute()
@@ -21,6 +23,7 @@ $.route.value = route
 
 const { t } = useI18n()
 const isOptionsModalOpen = ref(false)
+const isRoomsModalOpen = ref(false)
 const isNative = import.meta.env.VITE_PLATTFORM === 'native'
 
 showCustomPointer()
@@ -67,6 +70,12 @@ onUnmounted(() => {
   game$.removeEventListener('click', onClick, false)
   game$.removeEventListener('mousemove', onUnlockedMouseMove, false)
 })
+
+const showJoinRoom: Ref<boolean> = ref(false)
+client.on('joinedLobby', () => {
+  console.log('joined lobby')
+  showJoinRoom.value = true
+})
 </script>
 
 <template>
@@ -100,6 +109,25 @@ onUnmounted(() => {
 
         <div class="flex justify-center">
           <XButton
+            class="with-bg mt-3 leading-[1rem]"
+            :disabled="!showJoinRoom"
+            @click="client.joinGame('test')"
+            @keydown.enter="startArena"
+          >
+            {{ t('createRoom') }}
+          </XButton>
+        </div>
+
+        <div class="flex justify-center">
+          <XButton
+            class="mt-3 with-bg"
+            @click="() => (isRoomsModalOpen = true)"
+            >{{ t('rooms') }}
+          </XButton>
+        </div>
+
+        <div class="flex justify-center">
+          <XButton
             class="mt-3 with-bg"
             @click="() => (isOptionsModalOpen = true)"
             >{{ t('options') }}
@@ -109,6 +137,10 @@ onUnmounted(() => {
         <OptionsModal
           :show="isOptionsModalOpen"
           @close="() => (isOptionsModalOpen = false)"
+        />
+        <RoomsModal
+          :show="isRoomsModalOpen"
+          @close="() => (isRoomsModalOpen = false)"
         />
 
         <div

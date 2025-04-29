@@ -18,10 +18,10 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
     this.connectToRegionMaster('EU') // Or your desired region
   }
 
-  public onConnectedToMaster(): void {
-    console.log('Connected to Master Server')
-    this.joinLobby()
-  }
+  // public onConnectedToMaster(): void {
+  //   console.log('Connected to Master Server')
+  //   this.joinLobby()
+  // }
 
   public onJoinedLobby(): void {
     console.log('Joined Lobby')
@@ -29,7 +29,7 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
   }
 
   public joinGame(roomName: string): void {
-    if (this.state === LBC.State.JoinedLobby) {
+    if (this.state() === LBC.State.JoinedLobby) {
       console.log(`Joining room: ${roomName}`)
       this.joinRoom(roomName)
     } else {
@@ -47,7 +47,7 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
 
   public showAvailableRooms(callback: (rooms: Photon.LoadBalancing.RoomInfo[]) => void): void {
     this._onRoomListUpdateCallback = callback
-    if (this.state === LBC.State.JoinedLobby) {
+    if (this.state() === LBC.State.JoinedLobby) {
       this._onRoomListUpdateCallback(this._availableRooms)
     } else {
       console.warn('Not joined to the lobby yet. Room list will be updated upon joining.')
@@ -61,11 +61,16 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
     roomsRemoved: Photon.LoadBalancing.RoomInfo[]
   ): void {
     this._availableRooms = rooms
+    console.warn('rooms: ', rooms)
     this._onRoomListUpdateCallback(this._availableRooms)
   }
 
   public onError(errorCode: number, errorMsg: string): void {
     console.error(`Photon Error: ${errorMsg} (Error Code: ${errorCode})`)
+  }
+
+  public onLeaveRoom(data: any): void {
+    this.emitter.emit('onLeftRoom', data)
   }
 
   public onStateChange(state: number): void {
@@ -75,15 +80,31 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
       // console.log("Photon State:", stateName, `(${state})`);
     }
     if (state == LBC.State.JoinedLobby) {
-     this.emit('joinedLobby')
+      this.emit('joinedLobby')
+      this.showAvailableRooms(rooms => {
+        console.log(
+          'Available Rooms:',
+          rooms.map(r => r.name)
+        )
+        if (rooms.length > 0) {
+          // Optionally join the first room
+          this.joinGame(rooms[0].name)
+        }
+      })
     }
-    console.log('___ Photon State:', stateName, `(${state})`)
+    ;(state >= 8 || state === 5) && console.log('___ Photon State:', stateName, `(${state})`)
   }
 
   emit(event: string, ...args: any[]): void {
     // Custom event emitter logic can be added here
     this.emitter.emit(event, ...args)
     console.log(`Event emitted: ${event}`, args)
+  }
+  on(event: string, listener: (...args: any[]) => void): void {
+    this.emitter.on(event, listener)
+  }
+  off(event: string, listener: (...args: any[]) => void): void {
+    this.emitter.off(event, listener)
   }
 }
 

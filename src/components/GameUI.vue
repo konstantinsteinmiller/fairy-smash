@@ -41,7 +41,6 @@ import Game from '@/Game'
 import useMatch from '@/use/useMatch.ts'
 import { onMounted, type Ref, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import addPerformanceStats from '@/utils/stats'
 
 useMatch()
 const route = useRoute()
@@ -51,10 +50,6 @@ const worldId: Ref<string> = ref(route.params.worldId)
 const isBattleOver: Ref<boolean> = ref(!!$?.isBattleOver)
 const hasOneTeamLost: Ref<boolean> = ref(false)
 const fledGame: Ref<boolean> = ref(false)
-
-if ($.isDebug) {
-  // addPerformanceStats()
-}
 
 onMounted(async () => {
   await Game(worldId.value)
