@@ -15,63 +15,60 @@
     - [ ] attacking by charging and releasing spell after threshold and on sight of enemy
     - [ ] prevent self hurting
     - [ ] adjust threat charge levels
-- [ ] Sounds
-  - [ ] hurt sound (anime ääähhh)
-  - [ ] spell shot sound (zushhh)
-  - [ ] flying flap sound (flap flap)
-  - [ ] pickup item sounds
-  - [ ] pickup power up sounds
-  - [ ] pickup fairy dust sounds
-  - [ ] poison cloud damage sound (caugh)
-  - [ ] death sound
-  - [ ] missing mana sound
-  - [ ] battle music
-  - [ ] battle end sound
-  - [ ] background music
-- [ ] Tutorial
-  - [ ] Popover on screen for controls etc and descriptions
-  - [ ] Character controls tutorial
-  - [ ] add reset tutorial to options menu
-  - [ ] Missing mana tutorial
-  - [ ] don't ask again switch
+- [x] Sounds
+  - [x] hurt sound (anime ääähhh)
+  - [x] spell shot sound (zushhh)
+  - [x] flying flap sound (flap flap)
+  - [x] pickup item sounds
+  - [x] pickup power up sounds
+  - [x] pickup fairy dust sounds
+  - [x] poison cloud damage sound (caugh)
+  - [x] death sound
+  - [x] missing mana sound
+  - [x] battle music
+  - [x] battle end sound
+  - [x] background music
+- [x] Tutorial
+  - [x] Popover on screen for controls etc and descriptions
+  - [x] Character controls tutorial
+  - [x] add reset tutorial to options menu
+  - [x] Missing mana tutorial
+  - [x] overcharge tutorial
 - [ ] UI
-  - [ ] Charge indicator around crosshair
-  - [ ] Life bar
-  - [ ] Mana bar
-  - [ ] Endurance bar
-  - [ ] Fairy dust collected indicator
+  - [x] Charge indicator around crosshair
+  - [x] Life bar
+  - [x] Mana bar
+  - [x] Endurance bar
+  - [x] Fairy dust collected indicator
   - [ ] Selected spell box
   - [ ] Battle Over screen
-    - [ ] back to main menu button
-    - [ ] cleanup after game over and restart arena battle
-    - [ ] experience gained UI
-  - [ ] Loading Screen
-    - [ ] Progress Bar
+    - [x] back to main menu button
+    - [x] cleanup after game over and restart arena battle
+  - [x] Loading Screen
+    - [x] Progress Bar
     - [ ] Artwork
-    - [ ] AssetLoadingManager to preload assets
+    - [x] AssetLoadingManager to preload assets
 - [ ] Main Menu
-  - [ ] Start Game
-  - [ ] Load Game / Continue
+  - [x] Start Game
   - [ ] Options
     - [ ] Keybindings change
-  - [ ] Exit
+  - [x] Exit
 - [ ] Arena Gameplay
-  - [ ] Poison cloud growing towards the middle of the arena
+  - [x] Poison cloud growing towards the middle of the arena
   - [ ] Power ups that increase damage and defense
-  - [ ] create fairy dust item
-  - [ ] enemies dropping fairy dust on hit
-  - [ ] fairy dust blinking before disappearing
-  - [ ] every spell shot uses mana
-  - [ ] mana regenerates slowly over time
-  - [ ] if not enough mana for the spell, health is used instead of missing mana amount
-  - [ ] if enemy has not enough mana for the spell, health is used instead of missing mana amount
-  - [ ] if a fairy falls to the void, it dies at y < -10
+  - [x] fairy dust item
+  - [x] enemies dropping fairy dust on hit
+  - [x] fairy dust blinking before disappearing
+  - [x] every spell shot uses mana
+  - [x] mana regenerates slowly over time
+  - [x] if not enough mana for the spell, health is used instead of missing mana amount
+  - [x] if a fairy falls to the void, it dies at y < -10
 - [ ] World
-  - [ ] Multiplayer Arena
-    - [ ] Navigation Mesh
-  - [ ] skybox
-- [ ] Character Controller
-  - [ ] First person camera with Keyboard and Mouse
-  - [ ] Third person camera with Keyboard and Mouse
+  - [x] Multiplayer Arena
+    - [x] Navigation Mesh
+  - [x] skybox
+- [x] Character Controller
+  - [x] First person camera with Keyboard and Mouse
+  - [x] Third person camera with Keyboard and Mouse
 
 ## Bugs

@@ -3,6 +3,7 @@
     id="main-app"
     class="flex flex-col h-screen sm:h-full w-screen"
   >
+    <canvas style="width: 100%; height: 100vh" />
     <main
       class="game relative"
       :class="cssProps"

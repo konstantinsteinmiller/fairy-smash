@@ -1,4 +1,3 @@
-import world from '@/entity/World.ts'
 import { Clock, WebGLRenderer } from 'three'
 import * as THREE from 'three'
 import $ from '@/global'

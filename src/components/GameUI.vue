@@ -1,5 +1,4 @@
 <template>
-  <canvas style="width: 100%; height: 100vh" />
   <template v-if="!isBattleOver">
     <img
       class="absolute top-1 left-4 w-16 h-16"
