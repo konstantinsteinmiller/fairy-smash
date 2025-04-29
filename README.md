@@ -1,4 +1,4 @@
-![fairy-smash-royale banner](https://github.com/konstantinsteinmiller/smash-royale/blob/master/src/assets/documentation/fairy-smash-royale-banner_1331x430.jpg)
+![fairy-smash-royale banner](https://github.com/konstantinsteinmiller/fairy-smash/blob/master/src/assets/documentation/fairy-smash-royale-banner_1331x430.jpg)
 
 # Fairy Smash Royale
 
