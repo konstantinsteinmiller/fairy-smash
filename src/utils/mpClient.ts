@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events'
 import { MP_EVENTS } from '@/utils/enums.ts'
+import Actor = Photon.LoadBalancing.Actor
 
 const AppId = import.meta.env.VITE_APP_ID
 const AppVersion = import.meta.env.VITE_APP_VERSION
@@ -23,10 +24,15 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
     this.connectToRegionMaster('EU') // Or your desired region
   }
 
-  // public onConnectedToMaster(): void {
-  //   console.log('Connected to Master Server')
-  //   this.joinLobby()
-  // }
+  public onConnectedToMaster(): void {
+    console.log('Connected to Master Server')
+    // this.joinLobby()
+  }
+
+  public onServerErrorInfo(info: string): void {
+    console.error('info: ', info)
+    debugger
+  }
 
   public onJoinedLobby(): void {
     console.log('Joined Lobby')
@@ -70,8 +76,19 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
     this._onRoomListUpdateCallback(this._availableRooms)
   }
 
+  public onRoomList(rooms: Photon.LoadBalancing.RoomInfo[]): void {
+    this._availableRooms = rooms
+    this._onRoomListUpdateCallback(this._availableRooms)
+  }
+
   public onError(errorCode: number, errorMsg: string): void {
     console.error(`Photon Error: ${errorMsg} (Error Code: ${errorCode})`)
+    debugger
+  }
+
+  public onActorLeave(actor: Actor, cleanup: boolean): void {
+    console.error(`onActorLeave: ${actor} (cleanup: ${cleanup})`)
+    debugger
   }
 
   public onEvent(code: number, data: any, actorNr: number): void {

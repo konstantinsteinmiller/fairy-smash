@@ -7,10 +7,12 @@ import { client } from '@/utils/mpClient.ts'
 import { MP_EVENTS } from '@/utils/enums.ts'
 import Actor = Photon.LoadBalancing.Actor
 import { useRoute, useRouter } from 'vue-router'
+import useMatch from '@/use/useMatch.ts'
 
 const { t }: any = useI18n({ useScope: 'local' })
 const router = useRouter()
 const route = useRoute()
+const { isStartingGame } = useMatch()
 
 const props = defineProps({
   show: Boolean,
@@ -23,11 +25,8 @@ const onClose = () => {
   emit('close')
 }
 
-const instance = getCurrentInstance()
-
 const isReady: Ref<boolean> = ref(false)
 const readyMap: Ref<Map<number, boolean>> = ref(new Map())
-const isStartingGame: Ref<boolean> = ref(false)
 // isPlayerReady
 // readyMap.value.get(player?.actorNr)
 
@@ -94,7 +93,7 @@ client.on('onLeftRoom', () => {
 })
 
 onBeforeUnmount(() => {
-  !isStartingGame.value && onLeave()
+  // !isStartingGame.value && onLeave()
 })
 
 const playerCount = ref(0)
@@ -134,12 +133,11 @@ const startArena = () => {
   router.push({ name: 'battle', params: { worldId: 'mountain-arena' }, query: route.query })
 }
 const onStartGame = () => {
-  emit('close')
-
-  // client.raiseEvent(MP_EVENTS.START_GAME, {
-  //   message: `starting game`,
-  // })
+  client.raiseEvent(MP_EVENTS.START_GAME, {
+    message: `starting game`,
+  })
   startArena()
+  // emit('close')
 }
 client.on('START_GAME', ({ data }: { data: { message: string } }) => {
   console.log('START_GAME: ', data)

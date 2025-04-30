@@ -104,13 +104,11 @@ const onClose = () => {
 en:
   title: "Games"
   joinGame: "Join"
-  leaveGame: "Leave Game"
   refresh: "Refresh Game List"
   gameName: "Name"
 de:
   title: "Spiele"
   joinGame: "Beitreten"
-  leaveGame: "Spiel Verlassen"
   refresh: "Spiele Liste Aktualisieren"
   gameName: "Name"
 </i18n>
