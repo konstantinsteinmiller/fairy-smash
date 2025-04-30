@@ -12,7 +12,9 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
   emitter = new EventEmitter()
 
   constructor() {
-    super(Photon.ConnectionProtocol.Ws, AppId, AppVersion)
+    const protocol: number =
+      window.location.protocol === 'https:' ? Photon.ConnectionProtocol.Wss : Photon.ConnectionProtocol.Ws
+    super(protocol, AppId, AppVersion)
     this.setLogLevel(Photon.LogLevel.INFO)
   }
 
