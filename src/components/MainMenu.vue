@@ -15,7 +15,7 @@ import OptionsModal from '@/components/OptionsModal.vue'
 import XButton from '@/components/atoms/XButton.vue'
 import { useRoute } from 'vue-router'
 import { client } from '@/utils/mpClient.ts'
-import RoomsModal from "@/components/RoomsModal.vue";
+import RoomsModal from '@/components/RoomsModal.vue'
 
 const { isStartingGame } = useMatch()
 const route = useRoute()
