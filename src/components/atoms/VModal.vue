@@ -41,7 +41,7 @@
   </div>
   <div
     class="fixed w-screen bg-black opacity-70 inset-0 z-[1]"
-    @click="emit('close')"
+    @click="!isDialog && emit('close')"
   ></div>
 </template>
 
@@ -60,6 +60,10 @@ defineProps({
   description: {
     type: String,
     default: '',
+  },
+  isDialog: {
+    type: Boolean,
+    default: false,
   },
 })
 

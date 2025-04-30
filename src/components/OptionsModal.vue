@@ -15,6 +15,13 @@
         >
           <h5 class="text-l flex items-center justify-center">{{ t(item.name) }}</h5>
           <div class="flex justify-start items-center col-span-2 w-full flex-grow">
+            <XInput
+              v-if="item.type === 'input'"
+              v-model="item.value"
+              :placeholder="`Fairy Smasher ${Math.round(Math.random() * 1000)}`"
+              class="text-white focus:text-white rounded-3xl leading-[1rem] w-full"
+              @input="onInput(item.name, item.value)"
+            />
             <input
               v-if="item.type === 'range'"
               v-model="item.value"
@@ -59,10 +66,11 @@ import { computed, ref, watch } from 'vue'
 import XButton from '@/components/atoms/XButton.vue'
 import { LANGUAGES } from '@/utils/enums'
 import XSelect from '@/components/atoms/XSelect.vue'
+import XInput from '@/components/atoms/XInput.vue'
 
 const { t }: any = useI18n({ useScope: 'local' })
 const { locale }: any = useI18n({ useScope: 'global' })
-const { userSoundVolume, userMusicVolume, userLanguage, allowTutorial, setSettingValue } = useUser()
+const { userPlayerName, userSoundVolume, userMusicVolume, userLanguage, allowTutorial, setSettingValue } = useUser()
 
 defineProps({
   show: Boolean,
@@ -92,6 +100,11 @@ const languagesList = computed(() => {
 })
 
 const itemsList = ref([
+  {
+    name: 'playerName',
+    type: 'input',
+    value: userPlayerName,
+  },
   {
     name: 'soundVolume',
     type: 'range',

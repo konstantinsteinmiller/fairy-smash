@@ -1,10 +1,14 @@
 import { ref, watch } from 'vue'
 import type { Ref } from 'vue'
 import useUserDb from '@/use/useUserDb'
+import { GAME_USER_NAME_LABEL } from '@/utils/constants'
+import { client } from '@/utils/mpClient.ts'
 
 const userSoundVolume: Ref<number> = ref(0.7)
 const userMusicVolume: Ref<number> = ref(0.05)
 const userLanguage: Ref<string> = ref(navigator?.language?.split('-')[0] || 'en')
+const localStorageUserName = localStorage.getItem(GAME_USER_NAME_LABEL)
+const userPlayerName: Ref<string> = ref(localStorageUserName ?? `AwesomePlayer${Math.ceil(Math.random() * 1000)}`)
 
 const userTutorialsDoneMap: Ref<any> = ref('{}')
 const tutorialPhase: Ref<string> = ref('')
@@ -21,24 +25,36 @@ watch(
   { deep: true, once: true }
 )
 
-
 const useUser = () => {
   const { storeUser } = useUserDb({
+    userPlayerName,
     userSoundVolume,
     userMusicVolume,
     userLanguage,
     userTutorialsDoneMap,
   })
   const setSettingValue = (name: string, value: any) => {
+    let intermediate = ''
     if (name === 'language') {
       value = `'${value}'`
     }
     if (name === 'tutorialsDoneMap') {
       value = JSON.stringify(value)
     }
+    if (name === 'playerName') {
+      intermediate = value
+      value = JSON.stringify(value)
+    }
+
     eval(`user${name[0].toUpperCase()}${name.slice(1)}.value = ${value}`)
 
+    if (name === 'playerName') {
+      userPlayerName.value = intermediate
+      client.myActor().setName(userPlayerName.value)
+    }
+
     storeUser({
+      userPlayerName: userPlayerName.value,
       userSoundVolume: +userSoundVolume.value,
       userMusicVolume: +userMusicVolume.value,
       userLanguage: userLanguage.value,
@@ -47,6 +63,7 @@ const useUser = () => {
   }
 
   return {
+    userPlayerName,
     userSoundVolume,
     userMusicVolume,
     userLanguage,

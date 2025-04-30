@@ -16,6 +16,10 @@ import XButton from '@/components/atoms/XButton.vue'
 import { useRoute } from 'vue-router'
 import { client } from '@/utils/mpClient.ts'
 import RoomsModal from '@/components/RoomsModal.vue'
+import CreateGameModal from '@/components/CreateGameModal.vue'
+import GameRoomModal from '@/components/GameRoomModal.vue'
+import useUser from '@/use/useUser.ts'
+import {GAME_USER_NAME_LABEL} from "@/utils/constants.ts";
 
 const { isStartingGame } = useMatch()
 const route = useRoute()
@@ -23,6 +27,8 @@ $.route.value = route
 
 const { t } = useI18n()
 const isOptionsModalOpen = ref(false)
+const isCreatGameModalOpen = ref(false)
+const isGameRoomOpen = ref(false)
 const isRoomsModalOpen = ref(false)
 const isNative = import.meta.env.VITE_PLATTFORM === 'native'
 
@@ -72,8 +78,12 @@ onUnmounted(() => {
 })
 
 const showJoinRoom: Ref<boolean> = ref(false)
+const { userPlayerName } = useUser()
 client.on('joinedLobby', () => {
-  console.log('joined lobby')
+  const localStorageUserName = localStorage.getItem(GAME_USER_NAME_LABEL)
+  // const userPlayerName: Ref<string> = ref()
+  // console.log('joined lobby')
+  client.myActor().setName(localStorageUserName ?? `AwesomePlayer${Math.ceil(Math.random() * 1000)}`)
   showJoinRoom.value = true
 })
 </script>
@@ -110,17 +120,27 @@ client.on('joinedLobby', () => {
         <div class="flex justify-center">
           <XButton
             class="with-bg mt-3 leading-[1rem]"
-            :disabled="!showJoinRoom"
-            @click="client.joinGame('test')"
-            @keydown.enter="startArena"
+            @click="() => (isCreatGameModalOpen = true)"
           >
-            {{ t('createRoom') }}
+            {{ t('createGame') }}
           </XButton>
         </div>
+
+        <!--        <div class="flex justify-center">-->
+        <!--          <XButton-->
+        <!--            class="with-bg mt-3 leading-[1rem]"-->
+        <!--            :disabled="!showJoinRoom"-->
+        <!--            @click="client.joinGame('test')"-->
+        <!--            @keydown.enter="startArena"-->
+        <!--          >-->
+        <!--            {{ t('createRoom') }}-->
+        <!--          </XButton>-->
+        <!--        </div>-->
 
         <div class="flex justify-center">
           <XButton
             class="mt-3 with-bg"
+            :disabled="!showJoinRoom"
             @click="() => (isRoomsModalOpen = true)"
             >{{ t('rooms') }}
           </XButton>
@@ -138,9 +158,20 @@ client.on('joinedLobby', () => {
           :show="isOptionsModalOpen"
           @close="() => (isOptionsModalOpen = false)"
         />
+        <CreateGameModal
+          :show="isCreatGameModalOpen"
+          @close="() => (isCreatGameModalOpen = false)"
+          @created-room="() => (console.log('created-room'), (isGameRoomOpen = true))"
+        />
+        <GameRoomModal
+          :show="isGameRoomOpen"
+          @close="() => (isGameRoomOpen = false)"
+          @left-room="() => (isRoomsModalOpen = true)"
+        />
         <RoomsModal
           :show="isRoomsModalOpen"
           @close="() => (isRoomsModalOpen = false)"
+          @joined-room="() => (isGameRoomOpen = true)"
         />
 
         <div
@@ -161,15 +192,11 @@ client.on('joinedLobby', () => {
 
 <i18n>
 en:
-  startGame: "Start Game"
-  startArena: "Start Arena"
-  startWorld: "Start World"
+  createGame: "Create Game"
   options: "Options"
   quit: "Quit game"
 de:
-  startGame: "Spiel Starten"
-  startArena: "Arena Starten"
-  startWorld: "Welt Starten"
+  createGame: "Spiel erstellen"
   options: "Einstellungen"
   quit: "Spiel beenden"
 </i18n>

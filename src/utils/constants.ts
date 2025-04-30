@@ -36,6 +36,7 @@ export const CRITICAL_CHARGE_START_COLOR = new Color(0xd4dcfc)
 export const CRITICAL_CHARGE_END_COLOR = new Color(0x3d8dff)
 export const STRAFE_ROT_VELOCITY = 8
 export const TOTAL_LOAD_SIZE_NAME = 'total_load_size'
+export const GAME_USER_NAME_LABEL: string = 'fairySmashRoyalePlayerName'
 
 export const Options = {
   unadjustedMovement: true,

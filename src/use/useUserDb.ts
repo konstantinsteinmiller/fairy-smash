@@ -1,16 +1,18 @@
 import type { Ref } from 'vue'
 import useMatch from '@/use/useMatch'
 import clonedeep from 'lodash.clonedeep'
-
+import { GAME_USER_NAME_LABEL } from '@/utils/constants.ts'
 
 let db: any
 
 const useUserDb = ({
+  userPlayerName,
   userSoundVolume,
   userMusicVolume,
   userLanguage,
   userTutorialsDoneMap,
 }: {
+  userPlayerName: Ref<string>
   userSoundVolume: Ref<number>
   userMusicVolume: Ref<number>
   userLanguage: Ref<string>
@@ -40,6 +42,7 @@ const useUserDb = ({
     const objectStore = db.createObjectStore('user_os', { keyPath: 'name' })
 
     // Define what data items the objectStore will contain
+    objectStore.createIndex('userPlayerName', 'userPlayerName', { unique: false })
     objectStore.createIndex('userSoundVolume', 'userSoundVolume', { unique: false })
     objectStore.createIndex('userMusicVolume', 'userMusicVolume', { unique: false })
     objectStore.createIndex('userLanguage', 'userLanguage', { unique: false })
@@ -61,8 +64,10 @@ const useUserDb = ({
         if (request.result.userTutorialsDoneMap) {
           userTutorialsDoneMap.value = JSON.parse(request.result.userTutorialsDoneMap)
         }
+        localStorage.setItem(GAME_USER_NAME_LABEL, userPlayerName.value)
       } else {
         storeUser({
+          userPlayerName: userPlayerName.value,
           userSoundVolume: userSoundVolume.value,
           userMusicVolume: userMusicVolume.value,
           userLanguage: userLanguage.value,
@@ -100,6 +105,7 @@ const useUserDb = ({
     }
     const request = store.put(record)
 
+    localStorage.setItem(GAME_USER_NAME_LABEL, params.userPlayerName)
     // request.addEventListener('success', () => console.log('Record update attempt finished'))
     request.addEventListener('error', () => console.error(request.error))
   }

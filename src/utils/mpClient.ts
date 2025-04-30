@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import { MP_EVENTS } from '@/utils/enums.ts'
 
 const AppId = import.meta.env.VITE_APP_ID
 const AppVersion = import.meta.env.VITE_APP_VERSION
@@ -13,6 +14,10 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
     super(Photon.ConnectionProtocol.Ws, AppId, AppVersion)
     this.setLogLevel(Photon.LogLevel.INFO)
   }
+
+  // public get actors() {
+  //   return this.myRoom()?.loadBalancingClient.actorsArray
+  // }
 
   public connectToMaster(): void {
     this.connectToRegionMaster('EU') // Or your desired region
@@ -39,6 +44,7 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
 
   public onJoinRoom(): void {
     console.log(`Successfully joined room: ${this.myRoom().name}`)
+    this.emit('joinedRoom', this.myRoom().name)
   }
 
   public onJoinRoomFailed(errorCode: number, errorMsg: string): void {
@@ -61,7 +67,6 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
     roomsRemoved: Photon.LoadBalancing.RoomInfo[]
   ): void {
     this._availableRooms = rooms
-    console.warn('rooms: ', rooms)
     this._onRoomListUpdateCallback(this._availableRooms)
   }
 
@@ -69,8 +74,18 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
     console.error(`Photon Error: ${errorMsg} (Error Code: ${errorCode})`)
   }
 
-  public onLeaveRoom(data: any): void {
-    this.emitter.emit('onLeftRoom', data)
+  public onEvent(code: number, data: any, actorNr: number): void {
+    const eventEntry = Object.entries(MP_EVENTS).find(entry => entry[1] === code)
+    let eventEntryName = 'no code found'
+    if (eventEntry !== null && eventEntry !== undefined) {
+      eventEntryName = eventEntry[0]
+    }
+    this.emit(eventEntryName, { data, actorNr })
+  }
+
+  public onActorJoin(actor: any): void {
+    console.log('actor: ', actor)
+    this.emit('playerJoined', { actor })
   }
 
   public onStateChange(state: number): void {
@@ -81,24 +96,27 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
     }
     if (state == LBC.State.JoinedLobby) {
       this.emit('joinedLobby')
-      this.showAvailableRooms(rooms => {
-        console.log(
-          'Available Rooms:',
-          rooms.map(r => r.name)
-        )
-        if (rooms.length > 0) {
-          // Optionally join the first room
-          this.joinGame(rooms[0].name)
-        }
-      })
     }
     ;(state >= 8 || state === 5) && console.log('___ Photon State:', stateName, `(${state})`)
+  }
+
+  public onLeaveRoom(): void {
+    console.log('onLeaveRoom: ', client, client?.isJoinedToRoom)
+    if (client?.isJoinedToRoom()) {
+      client.raiseEvent(MP_EVENTS.LEAVE_ROOM, {
+        message: `left`,
+      })
+      client.leaveRoom()
+      client?.emitter?.emit('onLeftRoom' /*data*/)
+    } else {
+      console.warn('Cannot leave room: client not connected or not joined to a room.')
+    }
+    // client.raiseEvent({Photon.LoadBalancing.Constants.OperationCode})
   }
 
   emit(event: string, ...args: any[]): void {
     // Custom event emitter logic can be added here
     this.emitter.emit(event, ...args)
-    console.log(`Event emitted: ${event}`, args)
   }
   on(event: string, listener: (...args: any[]) => void): void {
     this.emitter.on(event, listener)

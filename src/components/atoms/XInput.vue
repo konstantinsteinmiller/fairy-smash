@@ -1,5 +1,6 @@
 <template>
   <input
+    class="focus:text-white"
     :value="model"
     :class="{
       glass: true,

@@ -72,7 +72,7 @@ input.glass
   color: var(--glass-color)
 
 input.glass:focus
-  color: #292929
+  color: #ffffff
   outline: none
 
 select.glass
@@ -124,7 +124,7 @@ button.glass
     .button-bg
       border-bottom-left-radius: 0
       border-top-left-radius: 0
-  &:hover
+  &:hover, &.button--on
     backdrop-filter: blur(10px)
     background: linear-gradient(to right, var(--vue-gradient-1), var(--vue-gradient-2), var(--vue-gradient-3))
     background-clip: text
@@ -133,6 +133,11 @@ button.glass
     color: transparent !important
     transition: 0.4s
     box-shadow: 1px 1px 6px 1px darkturquoise
+  &.button--on
+    box-shadow: 1px 1px 6px 8px darkturquoise
+    font-size: inherit !important
+    &.with-bg .button-bg
+      background-color: transparent!important
   &.danger
     color: #ff3255
   &.disabled, &:disabled, &.disabled:hover, &:disabled:hover
@@ -199,6 +204,12 @@ p.glass.card
 
 .glass.card h1, .glass.card h2, .glass.card h3, .glass.card h4
   background: linear-gradient(to right, var(--glass-gradient-1), var(--glass-gradient-2))
+  background-clip: text
+  color: transparent
+  padding-right: 0.5rem
+
+.glass.card h3, .glass.card h4
+  background: linear-gradient(to right, var(--vue-gradient-1), var(--vue-gradient-2), var(--vue-gradient-3))
   background-clip: text
   color: transparent
   padding-right: 0.5rem
