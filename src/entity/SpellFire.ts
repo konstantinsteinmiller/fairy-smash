@@ -1,4 +1,4 @@
-import { createFairyDustObjects } from '@/entity/FairyDust.ts'
+import { createFairyDustObjects, createPlayerFairyDustObjects } from '@/entity/FairyDust.ts'
 import useUser from '@/use/useUser.ts'
 import { MAX_ROTATION_SPEED, MIN_CHARGE_SPEED } from '@/utils/constants.ts'
 import $ from '@/global'
@@ -7,6 +7,7 @@ import { createRayTrace, remap } from '@/utils/function.ts'
 import { createShotVFX } from '@/utils/vfx.ts'
 import { Object3D, Vector3 } from 'three'
 import * as THREE from 'three'
+import { client } from '@/utils/mpClient.ts'
 
 let singleton: any = null
 export default () => {
@@ -35,15 +36,25 @@ export default () => {
     const entityId: string | undefined = intersect?.object?.entityId || intersect?.object?.parent?.entityId
     /* find intersected target and deal damage */
     if (entityId && entityId !== `${entity.uuid}`) {
-      const hitTarget: any = [$.player, $.enemy].find((character: any) => {
+      const hitTarget: any = Array.from($.entitiesMap.values()).find((character: any) => {
         return character.uuid === entityId
       })
       if (hitTarget) {
         hitTarget.stateMachine.setState('hit')
         const dmg = hitTarget.defense.buff.value * damage
         hitTarget.dealDamage(hitTarget, dmg)
-        hitTarget.guild === 'guild-1' && createFairyDustObjects(rotationSpeed, hitTarget.position)
+
+        /* tell remote player to switch to hit anim and update life */
+        const hitTargetActor = client.findActor(hitTarget.userId)
+        hitTargetActor?.setCustomProperties({
+          hp: hitTarget.hp - dmg,
+          triggerHit: true,
+        })
+        if (hitTarget.guild === 'guild-1') {
+          createPlayerFairyDustObjects(rotationSpeed, hitTarget.position, hitTarget)
+        }
         console.log('%c unit hit: ', 'color: red', dmg)
+        /* TODO: spawn damage number here */
       }
     }
   }
@@ -59,15 +70,6 @@ export default () => {
     if (entity.guild === 'guild-0') {
       raycaster.setFromCamera(pointer, $.camera)
       directionN = raycaster.ray.direction
-    } else {
-      const origin = entity.mesh.position.clone()
-      origin.y += entity.halfHeight + 0.1
-      origin.z -= 0.9
-      const targetPosition = target.mesh.position.clone()
-      targetPosition.y += target.halfHeight + 0.1
-
-      directionN = new Vector3().subVectors(targetPosition, origin).normalize()
-      raycaster.set(origin, directionN)
     }
 
     const objectsToIntersect = $.scene.children.filter((child: Object3D) => {
@@ -104,8 +106,8 @@ export default () => {
       intersect.object.type !== 'SkinnedMesh' &&
         intersect.object.name !== 'WaterArena' &&
         intersect.object.name !== 'colliderBox' /*
-         */ &&
-        console.log('intersect: ', intersect.object)
+          &&
+        console.log('intersect: ', intersect.object)*/
 
       createShotVFX(intersect, entity, directionN, () => {
         singleton.assessDamage(entity, intersect, rotationSpeed)

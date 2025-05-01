@@ -4,9 +4,8 @@ import Actor = Photon.LoadBalancing.Actor
 
 const AppId = import.meta.env.VITE_APP_ID
 const AppVersion = import.meta.env.VITE_APP_VERSION
-const Protocol = import.meta.env.VITE_APP_PROTOCOL
 const NODE_ENV = process.env.NODE_ENV
-console.log('NODE_ENV: ', NODE_ENV)
+
 const LBC = Photon.LoadBalancing.LoadBalancingClient
 
 class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
@@ -15,7 +14,6 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
   emitter = new EventEmitter()
 
   constructor() {
-    console.log('Protocol: ', NODE_ENV, Protocol, Protocol === 'Wss:')
     const protocol: number = NODE_ENV === 'production' ? Photon.ConnectionProtocol.Wss : Photon.ConnectionProtocol.Ws
     super(protocol, AppId, AppVersion)
     this.setLogLevel(Photon.LogLevel.INFO)
@@ -53,7 +51,7 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
   }
 
   public onJoinRoom(): void {
-    console.log(`Successfully joined room: ${this.myRoom().name}`)
+    // console.log(`Successfully joined room: ${this.myRoom().name}`)
     this.emit('joinedRoom', this.myRoom().name)
   }
 
@@ -90,7 +88,8 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
   }
 
   public onActorLeave(actor: Actor, cleanup: boolean): void {
-    console.error(`onActorLeave: ${actor} (cleanup: ${cleanup})`)
+    // console.log(`onActorLeave: ${actor} (cleanup: ${cleanup})`)
+    this.emit('playerLeft', { actor })
   }
 
   public onEvent(code: number, data: any, actorNr: number): void {
@@ -103,8 +102,18 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
   }
 
   public onActorJoin(actor: any): void {
-    console.log('actor: ', actor)
     this.emit('playerJoined', { actor })
+  }
+
+  public isMyActor(actor: any): boolean {
+    return actor.actorNr === this.myActor().actorNr
+  }
+
+  public findActor(actorToFind: string | object): boolean {
+    return (
+      this.actorsArray?.find((actor: any) => actor.userId === actorToFind || actor.userId === actorToFind?.userId) ||
+      null
+    )
   }
 
   public onStateChange(state: number): void {

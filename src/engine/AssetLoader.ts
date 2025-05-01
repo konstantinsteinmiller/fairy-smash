@@ -18,7 +18,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
 import $ from '@/global'
-import type {SpawnPoint, WP} from '@/types/world.ts'
+import type { SpawnPoint, WP } from '@/types/world.ts'
 
 let loader: any = null
 
@@ -147,7 +147,7 @@ const AssetManager = () => {
           resolve()
         },
         (fileProgressEvent: any) => $.fileLoader.onFileProgress(fullPath, fileProgressEvent),
-        () => ($.loadingManager.itemError(fullPath), reject())
+        () => ($.loadingManager.itemError(fullPath), reject({ message: 'Failed to load animation', src, fullPath }))
       )
     })
 
@@ -202,7 +202,7 @@ const AssetManager = () => {
           resolve()
         },
         (fileProgressEvent: any) => $.fileLoader.onFileProgress(src, fileProgressEvent),
-        error => ($.loadingManager.itemError(src), reject(error))
+        error => ($.loadingManager.itemError(src), reject({ message: 'Failed to load texture', src }))
       )
     })
 
@@ -228,7 +228,7 @@ const AssetManager = () => {
           resolve()
         },
         (fileProgressEvent: any) => $.fileLoader.onFileProgress(key, fileProgressEvent),
-        error => ($.loadingManager.itemError(key), reject(error))
+        error => ($.loadingManager.itemError(key), reject({ message: 'Failed to load cube texture', srcList }))
       )
     })
 
@@ -303,7 +303,7 @@ export default () => {
       try {
         await assetManager.loadMesh(src)
       } catch (error) {
-        return Promise.reject(error)
+        return Promise.reject({ message: 'Failed to load mesh', src })
       }
     }
 
@@ -358,7 +358,10 @@ export default () => {
               resolve(null)
             },
             (fileProgressEvent: any) => $.fileLoader.onFileProgress(name, fileProgressEvent),
-            () => ($.loadingManager.itemError(name), reject())
+            () => (
+              $.loadingManager.itemError(name),
+              reject({ message: 'Failed to load character animation', name, animationsPath })
+            )
           )
         })
       })

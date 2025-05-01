@@ -3,14 +3,14 @@ import ArenaCharacterFSM from '@/states/ArenaCharacterFSM.ts'
 import type { Guild, LevelType } from '@/types/entity.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { type ANIM } from '@/utils/constants.ts'
-import { LEVELS } from '@/utils/enums.ts'
 import { createEntityColliderBox, createRigidBodyEntity } from '@/utils/physics.ts'
 import { Object3D, Quaternion, Vector3 } from 'three'
 import $ from '@/global'
 import { getBaseStats } from '@/utils/controller.ts'
 import { client } from '@/utils/mpClient.ts'
+import Rapier from '@dimforge/rapier3d-compat'
 
-interface ControllerProps {
+interface RemoteBaseControllerProps {
   id?: string
   modelPath: string
   startPosition: Vector3
@@ -18,11 +18,11 @@ interface ControllerProps {
   modelHeight: number
   stats?: any
   guild: Guild
-  levelType: LevelType
+  levelType?: LevelType
   animationNamesList: ANIM[]
 }
 
-const Controller = ({
+const RemoteBaseController = ({
   id,
   modelPath,
   startPosition,
@@ -30,7 +30,7 @@ const Controller = ({
   stats = {},
   guild,
   animationNamesList,
-}: ControllerProps) => {
+}: RemoteBaseControllerProps) => {
   let entity: any | Object3D = null
   let mesh: any = new Object3D()
   mesh.position.copy(startPosition)
@@ -100,62 +100,52 @@ const Controller = ({
   loadModels()
   initPhysics()
 
+  entity.isMoving = true /* to not execute state transition keyboard logic */
+
   const updatePosition = (deltaS: number) => {
-    const movementVector = calcRapierMovementVector(entity, entity.currentVelocity, deltaS)
-    entity.rigidBody.setNextKinematicRotation(entity.getRotation())
-    entity.rigidBody.setNextKinematicTranslation(movementVector)
-
-    /* correct mesh position in physics capsule */
-    const meshPos = new Vector3(0, -entity.halfHeight, 0).add(entity.rigidBody.translation())
-    // Update Three.js Mesh Position
-    entity.position.copy(meshPos)
-    mesh.position.copy(meshPos)
-    entity.center = entity.calcHalfHeightPosition(entity)
-
     const remoteActor = client.findActor(entity.userId)
     const remoteData = remoteActor?.getCustomProperties?.() || {}
 
     /* receive position data from client actor */
-    if (remoteData.rotation) {
-      if (entity.hp !== remoteData.hp) {
-        const damage = entity.hp - remoteData.hp
-        entity.dealDamage(entity, damage)
-      }
+    if (!remoteData.rotation) return
 
-      if (entity.currency !== remoteData.currency) {
-        entity.currency = remoteData.currency
-      }
-
-      if (remoteData.triggerHit) {
-        entity.stateMachine.setState('hit')
-        remoteActor.setCustomProperties({ triggerHit: undefined })
-      }
-      // if (entity.stateMachine.currentState !== remoteData.currentState) {
-      //   entity.stateMachine.setState(remoteData.currentState)
-      //   remoteActor.setCustomProperties({
-      //     currentState: entity.stateMachine.currentState,
-      //   })
-      // }
+    if (remoteData.hasFled) {
+      entity.cleanup()
+      client.myActor().setCustomProperties({
+        hp: undefined,
+        currency: undefined,
+        rotation: undefined,
+        movementVector: undefined,
+        meshPos: undefined,
+        center: undefined,
+        currentVelocity: undefined,
+      })
+      return
     }
 
-    client.myActor().setCustomProperties({
-      hp: entity.hp,
-      currency: entity.currency,
-      rotation: {
-        w: entity.getRotation().w,
-        x: entity.getRotation().x,
-        y: entity.getRotation().y,
-        z: entity.getRotation().z,
-      },
-      movementVector: {
-        x: movementVector.x,
-        y: movementVector.y,
-        z: movementVector.z,
-      },
-      meshPos: { x: meshPos.x, y: meshPos.y, z: meshPos.z },
-      center: { x: entity.center.x, y: entity.center.y, z: entity.center.z },
-      currentVelocity: { x: entity.currentVelocity.x, y: entity.currentVelocity.y, z: entity.currentVelocity.z },
-    })
+    const damage = entity.hp - remoteData.hp
+    entity.dealDamage(entity, damage)
+
+    entity.currency = remoteData.currency
+    entity.currentVelocity = new Vector3().copy(remoteData.currentVelocity)
+    entity.rigidBody.setNextKinematicRotation(
+      new Quaternion(remoteData.rotation.x, remoteData.rotation.y, remoteData.rotation.z, remoteData.rotation.w)
+    )
+    entity.rigidBody.setNextKinematicTranslation(
+      new Rapier.Vector3(remoteData.movementVector.x, remoteData.movementVector.y, remoteData.movementVector.z)
+    )
+
+    const meshPos = new Vector3().copy(remoteData.meshPos)
+
+    entity.position.copy(meshPos)
+    mesh.position.copy(meshPos)
+    entity.center = new Vector3().copy(remoteData.center)
+    if (remoteData.currentState !== entity.stateMachine.currentState) {
+      entity.stateMachine.setState(remoteData.currentState)
+      remoteActor.setCustomProperties({
+        currentState: undefined,
+      })
+    }
   }
 
   entity.update = (deltaS: number) => {
@@ -173,4 +163,4 @@ const Controller = ({
   return entity
 }
 
-export default Controller
+export default RemoteBaseController

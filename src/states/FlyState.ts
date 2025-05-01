@@ -1,5 +1,5 @@
 import State, { isMovingEntity } from '@/states/State'
-import { LoopOnce, LoopRepeat } from 'three'
+import { LoopRepeat } from 'three'
 
 export default class FlyState extends State {
   constructor(parent: any) {

@@ -34,6 +34,7 @@ export interface Global {
     cleanup?: any
   }[]
   entitiesMap: Map<string, any>
+  enemiesList: any[]
   level: {
     name: string
     zone: string
@@ -107,6 +108,7 @@ const globalState = () => {
     eventsMap: {},
     oneTimeEventsList: [],
     entitiesMap: new Map(),
+    enemiesList: [],
     player: {},
     enemy: {},
     loadingManager: loadingManager,

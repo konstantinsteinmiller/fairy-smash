@@ -2,6 +2,7 @@ import CollidableItem from '@/entity/power-ups/CollidableItem.ts'
 import { createVFX } from '@/utils/vfx.ts'
 import $ from '@/global'
 import { Vector3 } from 'three'
+import { client } from '@/utils/mpClient.ts'
 
 export default async (position: Vector3) => {
   if (!$.canFlee) return
@@ -21,8 +22,9 @@ export default async (position: Vector3) => {
     onCollisionStart: (_colliderA, _colliderB, _uuid, entity) => {
       /* on collide buff logic */
       if (entity && $.canFlee) {
-        $.isBattleOver = true
-        $.fledGame = true
+        const actor = client.findActor(entity)
+        actor?.setCustomProperties({ hasFled: true })
+        entity.cleanup()
       }
 
       /* this is a pickup item, so we remove it here, we might have other logic here later */

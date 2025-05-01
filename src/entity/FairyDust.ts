@@ -6,6 +6,7 @@ import { remap } from '@/utils/function.ts'
 import { startFairyDustVFX } from '@/vfx/fairy-dust-vfx.ts'
 import { ColliderDesc, RigidBodyDesc } from '@dimforge/rapier3d-compat'
 import { Vector3 } from 'three'
+import { client } from '@/utils/mpClient.ts'
 
 const FairyDust = ({
   position,
@@ -95,6 +96,53 @@ const FairyDust = ({
   return collidable
 }
 export default FairyDust
+
+const MAX_MP_FAIRY_DUST_OBJECTS = 3
+export function createPlayerFairyDustObjects(rotationSpeed: number, position: Vector3, entity: any) {
+  const clampedRotationSpeed = Math.min(Math.max(rotationSpeed, MIN_CHARGE_SPEED), MAX_ROTATION_SPEED)
+  let totalObjects = Math.floor(
+    remap(MIN_CHARGE_SPEED, MAX_ROTATION_SPEED, 0, MAX_MP_FAIRY_DUST_OBJECTS, clampedRotationSpeed)
+  )
+
+  const actor = client.findActor(entity.userId)
+  if (entity.currency.fairyDust >= totalObjects) {
+    entity.currency.fairyDust -= totalObjects
+    actor?.setCustomProperties({
+      currency: entity.currency,
+    })
+  } else {
+    totalObjects = entity.currency.fairyDust
+    entity.currency.fairyDust = entity.currency.fairyDust - totalObjects
+    actor?.setCustomProperties({
+      currency: entity.currency,
+    })
+  }
+
+  if (totalObjects === 0) return
+
+  const fairyDustObjects = []
+  const spawnRadius = 0.5 // Radius around player to spawn objects
+  const FAIRY_DUST_COLLISION_GROUP = 0x00010000 // Custom collision group for fairy dust
+
+  for (let i = 0; i < totalObjects; i++) {
+    // Calculate position in a circle around player
+    const angle = (i / totalObjects) * Math.PI * 2
+    const offsetX = Math.cos(angle) * spawnRadius
+    const offsetZ = Math.sin(angle) * spawnRadius
+    const spawnHeight = 1.3 + Math.random() * 1.5 // 2-4 units above
+
+    const spawnPosition = position.clone().add(new Vector3(offsetX, spawnHeight, offsetZ))
+
+    const fairyDust = FairyDust({
+      position: spawnPosition,
+      onlyInteractableByGuild: 'guild-0' as Guild,
+    })
+
+    fairyDustObjects.push(fairyDust)
+  }
+
+  return fairyDustObjects
+}
 
 const MAX_FAIRY_DUST_OBJECTS = 7
 export function createFairyDustObjects(rotationSpeed: number, position: Vector3) {

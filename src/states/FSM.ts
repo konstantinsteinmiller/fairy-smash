@@ -1,3 +1,5 @@
+import { client } from '@/utils/mpClient.ts'
+
 export default class FiniteStateMachine {
   statesMap: { [key: string]: any }
   currentState: any
@@ -12,6 +14,9 @@ export default class FiniteStateMachine {
   }
 
   setState(stateName: string) {
+    if (this.owner.userId === client.myActor().userId) {
+      client.myActor()?.setCustomProperties({ currentState: stateName })
+    }
     const previousState = this.currentState
 
     if (previousState) {

@@ -71,8 +71,16 @@ const playersList: Ref<Actor[]> = ref([])
 
 client.on('playerJoined', ({ actor }: { actor: any }) => {
   // console.log('playerJoined: ', actor.name, client.myRoomActors())
-  if (actor.actorNr === client.myActor().actorNr) {
+  if (client.isMyActor(actor)) {
     isReady.value = false
+    actor.setCustomProperties({
+      modelPath: actor.name.toLowerCase().includes('smash')
+        ? '/models/nature-fairy-1/nature-fairy-1.fbx'
+        : '/models/thunder-fairy-1/thunder-fairy-1.fbx',
+      modelPath: actor.name.toLowerCase().includes('smash')
+        ? '/models/nature-fairy-1/nature-fairy-1.fbx'
+        : '/models/thunder-fairy-1/thunder-fairy-1.fbx',
+    })
   }
   readyMap.value.set(actor.actorNr, false)
 
@@ -128,7 +136,6 @@ watch(
 )
 
 const startArena = () => {
-  console.log('START_GAME: ')
   isStartingGame.value = true
   router.push({ name: 'battle', params: { worldId: 'mountain-arena' }, query: route.query })
 }
@@ -140,7 +147,6 @@ const onStartGame = () => {
   // emit('close')
 }
 client.on('START_GAME', ({ data }: { data: { message: string } }) => {
-  console.log('START_GAME: ', data)
   startArena()
 })
 </script>

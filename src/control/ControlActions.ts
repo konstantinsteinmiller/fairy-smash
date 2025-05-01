@@ -91,7 +91,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
           const { userSoundVolume } = useUser()
           entity.stateMachine.setState('hit')
           entity.dealDamage(entity, 15)
-          entity.dealDamage($.enemy, 115)
+          entity.dealDamage($.enemiesList[0], 115)
           $.sounds.addAndPlayPositionalSound(entity, 'hit', { volume: 0.025 * userSoundVolume.value * 0.25 })
         }
       },

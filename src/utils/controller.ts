@@ -180,6 +180,7 @@ export const statsUtils = () => {
           entity.mesh.geometry?.dispose()
           entity.mesh.material?.dispose()
           $.scene.remove(entity.mesh)
+
           // console.log('%c is dying: ', 'color: violet')
         }
       })

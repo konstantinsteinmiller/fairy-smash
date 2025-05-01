@@ -3,7 +3,7 @@ import { BoxGeometry, Mesh, MeshBasicMaterial, Vector3 } from 'three'
 import * as THREE from 'three'
 import $ from '@/global'
 import { inverseLerp, lerp } from 'three/src/math/MathUtils.js'
-import {DEFAULT_CHARGE_DURATION} from "@/utils/constants.ts";
+import { DEFAULT_CHARGE_DURATION } from '@/utils/constants.ts'
 
 const createColliderGeo = (geo: any, rigidBody: any, physic: any) => {
   const vertices = new Float32Array(geo.attributes.position.array)
@@ -166,4 +166,18 @@ export const mergeObjectsRecursive = (obj1: any, obj2: any) => {
 
 export const getChargeDuration = (entity: any) => {
   return DEFAULT_CHARGE_DURATION / entity.currentSpell.speed
+}
+
+// let playerCount = players
+export const getRandomStartPoints = (startingPositions: any[], playerCount: number) => {
+  const positions = $.level.pathfinder.startPositions.slice(0)
+  while (playerCount > 0) {
+    const playerSpawnPointsAmount = positions.length
+    const randomStartPos = Math.floor(Math.random() * playerSpawnPointsAmount)
+    startingPositions.push(positions[randomStartPos])
+
+    /* remove the selected player position from the available */
+    positions.splice(randomStartPos, 1)
+    playerCount--
+  }
 }

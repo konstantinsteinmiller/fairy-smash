@@ -5,7 +5,7 @@ export const BASE_NAVIGATION_MOVE_SPEED = 3
 export const LOOK_AROUND_SPEED = 1.5
 export const MAX_FLY_IMPULSE = 0.2
 export const MIN_FLY_IMPULSE = MAX_FLY_IMPULSE * 0.1
-export const FLY_COST = 15
+export const FLY_COST = 5
 export const ENDURANCE_REGEN_SPEED = 10
 export const MP_REGEN_SPEED = 0.5
 
@@ -37,6 +37,7 @@ export const CRITICAL_CHARGE_END_COLOR = new Color(0x3d8dff)
 export const STRAFE_ROT_VELOCITY = 8
 export const TOTAL_LOAD_SIZE_NAME = 'total_load_size'
 export const GAME_USER_NAME_LABEL: string = 'fairySmashRoyalePlayerName'
+export const GAME_LAST_ROOM: string = 'fairySmashRoyaleLastRoom'
 
 export const Options = {
   unadjustedMovement: true,

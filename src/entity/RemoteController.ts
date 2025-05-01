@@ -1,12 +1,12 @@
-import ArenaController from '@/entity/ArenaController.ts'
 import type { Guild } from '@/types/entity.ts'
-import { chargeUtils } from '@/utils/controller.ts'
+import { chargeUtils, createOverHeadHealthBar } from '@/utils/controller.ts'
 import { Quaternion, Vector3 } from 'three'
-import InputController from '@/control/KeyboardController.ts'
-import { createPlayerMovementStrategy } from '@/entity/MovementStrategy.ts'
+import { createEnemyMovementStrategy } from '@/entity/MovementStrategy.ts'
 import $ from '@/global'
+import RemoteArenaController from '@/entity/RemoteArenaController.ts'
+import { client } from '@/utils/mpClient.ts'
 
-interface ArenaPlayerControllerProps {
+interface RemoteControllerProps {
   actorNr: number
   userId: string
   modelPath: string
@@ -17,8 +17,8 @@ interface ArenaPlayerControllerProps {
   guild: Guild
 }
 
-const ArenaPlayerController = (config: ArenaPlayerControllerProps) => {
-  let entity = ArenaController(config)
+const RemoteController = (config: RemoteControllerProps) => {
+  let entity = RemoteArenaController(config)
   const utils: any = { ...chargeUtils() }
   for (const key in utils) {
     entity[key] = utils[key]
@@ -46,42 +46,49 @@ const ArenaPlayerController = (config: ArenaPlayerControllerProps) => {
     return entity.mesh.quaternion.copy(prevQuat)
   }
 
-  const movementStrategy = createPlayerMovementStrategy()
+  createOverHeadHealthBar(entity)
 
-  InputController(entity)
+  const movementStrategy = createEnemyMovementStrategy()
+  /* InputController(entity) */ /* moves by client update instead */
 
   let updateEventUuid: string = ''
   const update = (deltaS: number, elapsedTimeInS: number) => {
+    if (!entity) return
     const isFinished = entity.update(deltaS, elapsedTimeInS)
-    if (!isFinished) return
+    if (!isFinished || !entity) return
 
-    entity.stateMachine.update(deltaS, $.controls)
+    entity.stateMachine.update(deltaS)
 
     entity.checkBattleOver(updateEventUuid)
 
-    entity.currentVelocity = movementStrategy.calculateVelocity(entity, deltaS, $.controls)
-
-    entity.regenEndurance(entity, deltaS)
+    entity.currentVelocity = movementStrategy.calculateVelocity(entity.currentVelocity, deltaS)
   }
   updateEventUuid = $.addEvent('renderer.update', update)
 
-  $.addEvent('level.cleanup', () => {
+  entity.cleanup = () => {
     $.removeEvent('renderer.update', updateEventUuid)
-    /* transfer collected fairy dust to world character */
-    // if (entity.currency.fairyDust > 0) {
-    //   const worldPlayer = $.getWorldPlayer()
-    //   worldPlayer.currency.fairyDust += entity.currency.fairyDust
-    // }
 
-    $.entitiesMap.delete(entity.uuid)
+    entity?.mesh?.geometry?.dispose()
+    entity?.mesh?.material?.dispose()
+    entity?.mesh && $?.scene?.remove(entity?.mesh)
+
     entity = null
-    $.player = null
+    $.enemiesList = $.enemiesList.filter(enemy => enemy.userId !== config?.userId)
+  }
+  client.on('playerLeft', (actor: any) => {
+    if (actor.userId !== config.userId) return
+    console.warn(`${actor.name} left: `, actor)
+    entity.cleanup()
+  })
+
+  $.addEvent('level.cleanup', () => {
+    entity.cleanup()
   })
 
   $.entitiesMap.set(entity.uuid, entity)
-  $.player = entity
+  $.enemiesList.push(entity)
 
   return entity
 }
 
-export default ArenaPlayerController
+export default RemoteController

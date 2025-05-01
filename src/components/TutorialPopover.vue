@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import XButton from '@/components/atoms/XButton.vue'
 import { computed, type ComputedRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -38,7 +37,7 @@ const popoverStyles: ComputedRef<any> = computed(() => ({
     :class="['fixed z-[199]']",
     :style="popoverStyles"
   )
-    .glass.card.p-4.max-w-96.max-h-80
+    .glass.card.p-4.max-w-96.max-h-96
       slot You forgot to add the SLOT CONTENT here!
 
       //.actions.flex.justify-end.mt-1

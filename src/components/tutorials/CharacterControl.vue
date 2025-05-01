@@ -64,6 +64,9 @@ watch(
     .max-w-80.col-span-2 {{ t('useKeyH') }}
     .flex.justify-center.items-center
       Key(k="KeyH")
+    .max-w-80.col-span-2 {{ t('useSprint') }}
+    .flex.justify-center.items-center
+      Key(k="ShiftLeft")
 </template>
 
 <i18n>
@@ -71,10 +74,12 @@ en:
   useControlKeys: "Move your character:"
   useMouseLeft: "HOLD Left mouse button to charge. Release when strong enough."
   useMouseRight: "Right mouse button to fly."
-  useKeyH: "H key to toggle First-/Third-person-view."
+  useKeyH: "H key: toggle First-/Third-person-view."
+  useSprint: "Shift left key: run."
 de:
   useControlKeys: "Bewege deinen Charakter:"
   useMouseLeft: "HALTE die linke Maustaste um aufzuladen. Loslassen wenn stark genug."
   useMouseRight: "Rechte Maustaste um zu fliegen."
-  useKeyH: "H Taste um zwischen der First-/Third-Person-Ansicht zu wechseln."
+  useKeyH: "H Taste: First-/Third-Person-Ansicht wechseln."
+  useSprint: "Shift-Links Taste: Rennen."
 </i18n>

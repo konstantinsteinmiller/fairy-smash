@@ -107,7 +107,7 @@ const Crosshair = () => {
   /* release shot if attack button is released */
   $.addEvent('controls.attack1.up', () => {
     const entity = $.player
-    canFire && fireRaycaster(rotationSpeed, entity, $.enemy)
+    canFire && fireRaycaster(rotationSpeed, entity)
     forcedSpellRelease = false
     canFire = false
     crosshairDots.visible = false
@@ -199,7 +199,7 @@ const Crosshair = () => {
     } else {
       /* spell overload -> forced release of the charged shot and receive damage */
       // console.log('rotationSpeed: ', rotationSpeed)
-      fireRaycaster(rotationSpeed, $.player, $.enemy)
+      fireRaycaster(rotationSpeed, $.player)
       canFire = false
       forcedSpellRelease = true
       entity.currentSpell.charge = 0

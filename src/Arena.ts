@@ -7,34 +7,54 @@ import { Vector3 } from 'three'
 import World from '@/entity/World'
 import Crosshair from '@/entity/Crosshair'
 import { assetManager } from '@/engine/AssetLoader.ts'
+import { client } from '@/utils/mpClient.ts'
+import RemoteController from '@/entity/RemoteController.ts'
+import { getRandomStartPoints } from '@/utils/function.ts'
 
-const Arena = async (level: string, players: number = 1) => {
+const Arena = async (level: string, players: number = 2) => {
   World(level, () => {
     $.level.spawnPointMap = assetManager.assets.spawnPointMap
 
-    const startingPositions: any[] = []
-    const positions = $.level.pathfinder.startPositions.slice(0)
-    let playerCount = players
-    const getRandomStartPoints = () => {
-      while (playerCount > 0) {
-        const playerSpawnPointsAmount = positions.length
-        const randomStartPos = Math.floor(Math.random() * playerSpawnPointsAmount)
-        startingPositions.push(positions[randomStartPos])
+    const startingPositions: any[] = [
+      /*
+      {
+        x: -4.97,
+        y: -1.24,
+        z: 14.66,
+      },
+      {
+        x: -0.97,
+        y: 3.91,
+        z: 14.79,
+      },
+      {
+        x: 2.32,
+        y: -1.98,
+        z: 14.87,
+      },
+      {
+        x: -5.19,
+        y: 4.02,
+        z: 14.73,
+      },*/
+    ]
 
-        /* remove the selected player position from the available */
-        positions.splice(randomStartPos, 1)
-        playerCount--
-      }
-    }
-    getRandomStartPoints()
-    ;[...Array(players)].forEach((_player: any, index: number) => {
-      const startWp = startingPositions.shift()
-      const startPos = startWp?.position
+    // console.log('client: ', client, client.actorsArray)
+    const actorsList = client.actorsArray || []
+    console.log('actorsList: ', actorsList)
+
+    const playerCount = actorsList?.length
+    getRandomStartPoints(startingPositions, playerCount)
+
+    if (actorsList.length === 0) {
+      const startPos = startingPositions.shift()?.position
 
       ArenaPlayerController({
-        modelPath: '/models/thunder-fairy-1/thunder-fairy-1.fbx',
+        actorNr: client.myActor().actorNr,
+        userId: client.getUserId(),
+        modelPath: '/models/nature-fairy-1/nature-fairy-1.fbx',
         stats: {
-          name: `player ${index}`,
+          name: client.myActor().name,
           hp: 100,
           previousHp: 100,
           mp: 50,
@@ -45,6 +65,46 @@ const Arena = async (level: string, players: number = 1) => {
         modelHeight: 1.8,
         guild: 'guild-0' as Guild,
       })
+      return
+    }
+    actorsList.forEach((actor: any) => {
+      const startPos = startingPositions.shift()?.position
+
+      if (client.isMyActor(actor)) {
+        ArenaPlayerController({
+          actorNr: actor.actorNr,
+          userId: actor.userId,
+          modelPath: actor.customProperties.modelPath || '/models/nature-fairy-1/nature-fairy-1.fbx',
+          stats: {
+            name: actor.name,
+            hp: 5,
+            previousHp: 100,
+            mp: 50,
+            previousMp: 50,
+          },
+          startPosition: new Vector3(startPos.x, startPos.y, startPos.z),
+          startRotation: startPos.quaternion,
+          modelHeight: 1.8,
+          guild: 'guild-0' as Guild,
+        })
+      } else {
+        RemoteController({
+          actorNr: actor.actorNr,
+          userId: actor.userId,
+          modelPath: actor.customProperties.modelPath,
+          stats: {
+            name: actor.name,
+            hp: 4,
+            previousHp: 100,
+            mp: 50,
+            previousMp: 50,
+          },
+          startPosition: new Vector3(startPos.x, startPos.y, startPos.z),
+          startRotation: startPos.quaternion,
+          modelHeight: 1.8,
+          guild: 'guild-1' as Guild,
+        })
+      }
     })
 
     // AIController({

@@ -1,4 +1,3 @@
-import Controller from '@/entity/Controller.ts'
 import type { Guild } from '@/types/entity.ts'
 import useUser from '@/use/useUser.ts'
 import { characterAnimationNamesList } from '@/utils/constants.ts'
@@ -7,10 +6,11 @@ import { isPlayerInPoisonCloud } from '@/vfx/poison-cloud.ts'
 import { Quaternion, Vector3 } from 'three'
 import $ from '@/global'
 import { statsUtils, controllerUtils } from '@/utils/controller.ts'
+import RemoteBaseController from '@/entity/RemoteBaseController.ts'
 import { client } from '@/utils/mpClient.ts'
 import { checkRoomGameOver } from '@/utils/room.ts'
 
-interface ArenaControllerProps {
+interface RemoteArenaControllerProps {
   modelPath: string
   startPosition: Vector3
   startRotation: Quaternion
@@ -19,15 +19,15 @@ interface ArenaControllerProps {
   guild: Guild
 }
 
-const ArenaController = ({
+const RemoteArenaController = ({
   modelPath,
   startPosition,
   startRotation,
   modelHeight,
   stats = {},
   guild,
-}: ArenaControllerProps) => {
-  const entity: any = Controller({
+}: RemoteArenaControllerProps) => {
+  const entity: any = RemoteBaseController({
     modelPath,
     startPosition,
     startRotation,
@@ -81,12 +81,10 @@ const ArenaController = ({
 
     checkPoisonCloud()
 
-    entity.regenMana(entity, deltaS)
-
     return true
   }
 
   return entity
 }
 
-export default ArenaController
+export default RemoteArenaController

@@ -27,7 +27,7 @@ const isMouseKey: ComputedRef<boolean> = computed(() => props.k === 'Mouse0' || 
 </script>
 
 <template lang="pug">
-  .key.inline-block.rounded-md.w-8.h-8.flex.justify-center.items-center(class="border-[2px]",
+  .key.inline-block.rounded-md.min-w-8.px-1.h-8.flex.justify-center.items-center(class="border-[2px]",
     :class="{ 'bg-green-800': isActivated && !isMouseKey,  'border-white' : !isMouseKey,  'border-transparent' : isMouseKey }"
     )
     .inner.box-content.rounded-md(v-if="k === 'Mouse0'",
