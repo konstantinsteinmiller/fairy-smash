@@ -4,6 +4,9 @@ import Actor = Photon.LoadBalancing.Actor
 
 const AppId = import.meta.env.VITE_APP_ID
 const AppVersion = import.meta.env.VITE_APP_VERSION
+const Protocol = import.meta.env.VITE_APP_PROTOCOL
+const NODE_ENV = process.env.NODE_ENV
+console.log('NODE_ENV: ', NODE_ENV)
 const LBC = Photon.LoadBalancing.LoadBalancingClient
 
 class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
@@ -12,8 +15,8 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
   emitter = new EventEmitter()
 
   constructor() {
-    const protocol: number =
-      window.location.protocol === 'https:' ? Photon.ConnectionProtocol.Wss : Photon.ConnectionProtocol.Ws
+    console.log('Protocol: ', NODE_ENV, Protocol, Protocol === 'Wss:')
+    const protocol: number = NODE_ENV === 'production' ? Photon.ConnectionProtocol.Wss : Photon.ConnectionProtocol.Ws
     super(protocol, AppId, AppVersion)
     this.setLogLevel(Photon.LogLevel.INFO)
   }
@@ -33,7 +36,6 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
 
   public onServerErrorInfo(info: string): void {
     console.error('info: ', info)
-    debugger
   }
 
   public onJoinedLobby(): void {
@@ -85,12 +87,10 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
 
   public onError(errorCode: number, errorMsg: string): void {
     console.error(`Photon Error: ${errorMsg} (Error Code: ${errorCode})`)
-    debugger
   }
 
   public onActorLeave(actor: Actor, cleanup: boolean): void {
     console.error(`onActorLeave: ${actor} (cleanup: ${cleanup})`)
-    debugger
   }
 
   public onEvent(code: number, data: any, actorNr: number): void {
