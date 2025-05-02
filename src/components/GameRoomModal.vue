@@ -8,7 +8,7 @@ import { MP_EVENTS } from '@/utils/enums.ts'
 import Actor = Photon.LoadBalancing.Actor
 import { useRoute, useRouter } from 'vue-router'
 import useMatch from '@/use/useMatch.ts'
-import { getShuffledStartPositions, pickPlayerModels } from '@/utils/room.ts'
+import { getShuffledStartPositions } from '@/utils/room.ts'
 import CharacterSlider from '@/components/organism/CharacterSlider.vue'
 
 const { t }: any = useI18n({ useScope: 'local' })
@@ -50,6 +50,7 @@ const toggleReady = (event: any) => {
   isReady.value = !isReady.value
 
   readyMap.value.set(client.myActor().actorNr, isReady.value)
+  setReadyPlayersCount()
   client.myActor().setCustomProperties({
     isReady: isReady.value,
   })
@@ -63,15 +64,18 @@ const areAllPlayersReady = computed(() => {
 
 client.on('READY', ({ data, actorNr }: { data: { message: string }; actorNr: number }) => {
   readyMap.value.set(actorNr, JSON.parse(data.message))
+  setReadyPlayersCount()
 })
 client.on('LEAVE_ROOM', ({ data, actorNr }: { data: { message: string }; actorNr: number }) => {
   readyMap.value.set(actorNr, false)
+  setReadyPlayersCount()
   // console.log('LEAVE_ROOM actorNr: ', actorNr)
   updateActors()
 })
-const readyPlayersCount = computed(() => {
-  return Array.from(readyMap.value.values()).filter((x: boolean) => x === true)?.length
-})
+const readyPlayersCount = ref(client.actorsList.filter((actor: Actor) => readyMap.value.get(actor.actorNr))?.length)
+const setReadyPlayersCount = () => {
+  readyPlayersCount.value = client.actorsList.filter((actor: Actor) => readyMap.value.get(actor.actorNr))?.length
+}
 const playersList: Ref<Actor[]> = ref([])
 
 client.on('playerJoined', ({ actor }: { actor: any }) => {
@@ -80,6 +84,7 @@ client.on('playerJoined', ({ actor }: { actor: any }) => {
     isReady.value = false
   }
   readyMap.value.set(actor.actorNr, false)
+  setReadyPlayersCount()
 
   updateActors()
 
@@ -90,6 +95,7 @@ client.on('playerJoined', ({ actor }: { actor: any }) => {
 
 const onLeave = () => {
   readyMap.value.set(client.myActor().actorNr, false)
+  setReadyPlayersCount()
   client.onLeaveRoom()
   emit('close')
 }
@@ -127,6 +133,7 @@ watch(
     playersList.value.forEach((player: Actor) => {
       if (readyMap.value.get(player.actorNr) === undefined) {
         readyMap.value.set(player.actorNr, false)
+        setReadyPlayersCount()
       }
     })
   }
@@ -157,7 +164,6 @@ const onSelectedFairy = (modelId: string) => {
   client.myActor().setCustomProperties({
     modelPath: `/models/${modelId}/${modelId}.fbx`,
   })
-  console.log('client.myActor(): ', client.myActor().getCustomProperties().modelPath)
 }
 </script>
 
