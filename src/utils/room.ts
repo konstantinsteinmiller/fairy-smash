@@ -38,3 +38,19 @@ export const getShuffledStartPositions = () => {
     .map((sp: any) => sp[1])
     .shuffle()
 }
+
+const modelsList = [
+  '/models/nature-fairy-1/nature-fairy-1.fbx',
+  '/models/dragon-young/dragon-young.fbx',
+  '/models/thunder-fairy-1/thunder-fairy-1.fbx',
+  '/models/yeti-young/yeti-young.fbx',
+  '/models/dragon-old/dragon-old.fbx',
+  '/models/psi-nightmare/psi-nightmare.fbx',
+  '/models/mushroom-middle/mushroom-middle.fbx',
+  '/models/fire-harpy/fire-harpy.fbx',
+].shuffle()
+
+export const pickPlayerModels = () => {
+  const sortedActorsList = client.sortedActors || []
+  sortedActorsList.forEach((actor, index) => actor.setCustomProperties({ modelPath: modelsList[index] }))
+}

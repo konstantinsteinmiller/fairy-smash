@@ -1,7 +1,5 @@
 import { assetManager } from '@/engine/AssetLoader.ts'
-import {
-  characterAnimationNamesList,
-} from '@/utils/constants.ts'
+import { characterAnimationNamesList } from '@/utils/constants.ts'
 import { prependBaseUrl } from '@/utils/function.ts'
 import { ref } from 'vue'
 
@@ -32,10 +30,14 @@ export default () => {
   const characterAnimsList = [
     '/models/nature-fairy-1/nature-fairy-1.fbx',
     '/models/thunder-fairy-1/thunder-fairy-1.fbx',
+    '/models/yeti-young/yeti-young.fbx',
+    '/models/dragon-young/dragon-young.fbx',
+    '/models/dragon-old/dragon-old.fbx',
+    '/models/fire-harpy/fire-harpy.fbx',
+    '/models/psi-nightmare/psi-nightmare.fbx',
+    '/models/mushroom-middle/mushroom-middle.fbx',
   ]
-  const spawnPointsList = [
-    '/worlds/arenas/mountain-arena-spawn-points.comp.glb',
-  ]
+  const spawnPointsList = ['/worlds/arenas/mountain-arena-spawn-points.comp.glb']
 
   let promisesLength = 1
   const updateProgress = () => {

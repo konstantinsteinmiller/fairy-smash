@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import VModal from '@/components/atoms/VModal.vue'
-import { computed, getCurrentInstance, onBeforeUnmount, type Ref, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, type Ref, ref, watch } from 'vue'
 import XButton from '@/components/atoms/XButton.vue'
 import { client } from '@/utils/mpClient.ts'
 import { MP_EVENTS } from '@/utils/enums.ts'
 import Actor = Photon.LoadBalancing.Actor
 import { useRoute, useRouter } from 'vue-router'
 import useMatch from '@/use/useMatch.ts'
-import { assetManager } from '@/engine/AssetLoader.ts'
-import type { SpawnPoint } from '@/types/world.ts'
-import { getShuffledStartPositions } from '@/utils/room.ts'
+import { getShuffledStartPositions, pickPlayerModels } from '@/utils/room.ts'
+import CharacterSlider from '@/components/organism/CharacterSlider.vue'
 
 const { t }: any = useI18n({ useScope: 'local' })
 const router = useRouter()
@@ -79,14 +78,15 @@ client.on('playerJoined', ({ actor }: { actor: any }) => {
   // console.log('playerJoined: ', actor.name, client.myRoomActors())
   if (client.isMyActor(actor)) {
     isReady.value = false
-    actor.setCustomProperties({
-      modelPath: actor.name.toLowerCase().includes('smash')
-        ? '/models/nature-fairy-1/nature-fairy-1.fbx'
-        : '/models/thunder-fairy-1/thunder-fairy-1.fbx',
-      // modelPath: actor.name.toLowerCase().includes('smash')
-      //   ? '/models/nature-fairy-1/nature-fairy-1.fbx'
-      //   : '/models/thunder-fairy-1/thunder-fairy-1.fbx',
-    })
+
+    // actor.setCustomProperties({
+    //   modelPath: actor.name.toLowerCase().includes('smash')
+    //     ? '/models/nature-fairy-1/nature-fairy-1.fbx'
+    //     : '/models/thunder-fairy-1/thunder-fairy-1.fbx',
+    //   // modelPath: actor.name.toLowerCase().includes('smash')
+    //   //   ? '/models/nature-fairy-1/nature-fairy-1.fbx'
+    //   //   : '/models/thunder-fairy-1/thunder-fairy-1.fbx',
+    // })
   }
   readyMap.value.set(actor.actorNr, false)
 
@@ -151,6 +151,8 @@ const onStartGame = () => {
     startPositions: getShuffledStartPositions(),
   })
 
+  pickPlayerModels()
+
   client.raiseEvent(MP_EVENTS.START_GAME, {
     message: `starting game`,
   })
@@ -210,13 +212,14 @@ client.on('START_GAME', ({ data }: { data: { message: string } }) => {
       </div>
     </template>
     <template #buttons>
-      <div class="flex justify-center items-center gap-4">
+      <div class="flex justify-center items-center gap-4 relative">
         <XButton @click="onLeave">{{ t('leaveGame') }}</XButton>
         <XButton
           v-if="areAllPlayersReady && playersList.length >= 2"
           @click="onStartGame"
           >{{ t('startGame') }}</XButton
         >
+        <CharacterSlider />
       </div>
     </template>
   </VModal>
