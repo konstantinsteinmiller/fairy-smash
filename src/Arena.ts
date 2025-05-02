@@ -9,43 +9,15 @@ import Crosshair from '@/entity/Crosshair'
 import { assetManager } from '@/engine/AssetLoader.ts'
 import { client } from '@/utils/mpClient.ts'
 import RemoteController from '@/entity/RemoteController.ts'
-import { getRandomStartPoints } from '@/utils/function.ts'
 
-const Arena = async (level: string, players: number = 2) => {
+const Arena = async (level: string) => {
   World(level, () => {
     $.level.spawnPointMap = assetManager.assets.spawnPointMap
 
-    const startingPositions: any[] = [
-      /*
-      {
-        x: -4.97,
-        y: -1.24,
-        z: 14.66,
-      },
-      {
-        x: -0.97,
-        y: 3.91,
-        z: 14.79,
-      },
-      {
-        x: 2.32,
-        y: -1.98,
-        z: 14.87,
-      },
-      {
-        x: -5.19,
-        y: 4.02,
-        z: 14.73,
-      },*/
-    ]
+    const actorsList = client.sortedActors || []
+    const startingPositions: any[] = client.myRoom().getCustomProperties()?.startPositions
 
-    // console.log('client: ', client, client.actorsArray)
-    const actorsList = client.actorsArray || []
-    console.log('actorsList: ', actorsList)
-
-    const playerCount = actorsList?.length
-    getRandomStartPoints(startingPositions, playerCount)
-
+    /* testing single player */
     if (actorsList.length === 0) {
       const startPos = startingPositions.shift()?.position
 
@@ -67,8 +39,10 @@ const Arena = async (level: string, players: number = 2) => {
       })
       return
     }
-    actorsList.forEach((actor: any) => {
-      const startPos = startingPositions.shift()?.position
+
+    /* mp */
+    actorsList.forEach((actor: any, actorIndex) => {
+      const startPos = startingPositions[actorIndex]?.position
 
       if (client.isMyActor(actor)) {
         ArenaPlayerController({
@@ -77,7 +51,7 @@ const Arena = async (level: string, players: number = 2) => {
           modelPath: actor.customProperties.modelPath || '/models/nature-fairy-1/nature-fairy-1.fbx',
           stats: {
             name: actor.name,
-            hp: 5,
+            hp: 55,
             previousHp: 100,
             mp: 50,
             previousMp: 50,
@@ -94,7 +68,7 @@ const Arena = async (level: string, players: number = 2) => {
           modelPath: actor.customProperties.modelPath,
           stats: {
             name: actor.name,
-            hp: 4,
+            hp: 55,
             previousHp: 100,
             mp: 50,
             previousMp: 50,

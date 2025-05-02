@@ -45,7 +45,7 @@ const AIController = (config: {
       if (candidatesList.length > 0) {
         enemy = candidatesList.reduce((closestEnemy, curr) => {
           return entity.position.distanceTo(curr.position) < entity.position.distanceTo(closestEnemy.position) &&
-            !enemy?.isDead()
+            !enemy?.isDead(enemy)
             ? curr
             : closestEnemy
         }, candidatesList[0])

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="h-[7%] p-[0.125%] absolute"
+    class="h-16 p-[2px] fixed"
     :class="containerClasses"
     :style="containerStyles"
   >
@@ -82,6 +82,7 @@ const typeToImgMap: any = {
 const props = defineProps({
   ownerId: { type: String, required: true },
   type: { type: String, default: 'life' },
+  actorNr: { type: Number, default: -1 },
 })
 
 const owner: any = ref({
@@ -106,25 +107,27 @@ let typeSelectionList: any[] = []
 let entity: any = $?.[props.ownerId]
 const uuid = ref('')
 
+const isEnemy = props.actorNr !== -1
+
 const updateCallback = (deltaS: number) => {
   counter++
-  entity = $?.[props.ownerId]
-  uuid.value = entity?.uuid
+  entity = isEnemy ? $.enemiesList.find(enemy => enemy.actorNr === props.actorNr) : $?.[props.ownerId] /* player */
+  uuid.value = isEnemy ? props.actorNr : entity?.uuid
 
   if (!entity) return
 
   if (props.type === 'life') {
-    const { hp, previousHp, maxHp } = $?.[props.ownerId]
+    const { hp, previousHp, maxHp } = entity
     typeSelectionList = [hp, previousHp, maxHp, 'hp', 'previousHp', 'maxHp']
     condition = target !== hp
   }
   if (props.type === 'mana') {
-    const { mp, previousMp, maxMp } = $?.[props.ownerId]
+    const { mp, previousMp, maxMp } = entity
     typeSelectionList = [mp, previousMp, maxMp, 'mp', 'previousMp', 'maxMp']
     condition = target !== mp
   }
   if (props.type === 'endurance') {
-    const { endurance, previousEndurance, maxEndurance } = $?.[props.ownerId]
+    const { endurance, previousEndurance, maxEndurance } = entity
     typeSelectionList = [endurance, previousEndurance, maxEndurance, 'endurance', 'previousEndurance', 'maxEndurance']
     condition = target !== endurance
   }
@@ -189,6 +192,7 @@ const containerStyles = computed(() => ({
   width: '100%',
   maxWidth: maxSize.value,
   minWidth: maxSize.value,
+  opacity: props.ownerId === 'enemy',
 }))
 const barClasses = computed(() => ({
   // [`min-w-[${MAX_SIZE}] w-[${MAX_SIZE}]`]: true,
@@ -198,11 +202,12 @@ const ornamentClasses = computed(() => ({
 }))
 const containerClasses = computed(() => ({
   [`${props.ownerId}-${props.type}-bar`]: true,
+  [`actor-${props.actorNr}-bar`]: isEnemy,
   [`entity-${uuid.value}`]: uuid.value,
   ' bottom-1 left-4': props.type === 'life',
   ' bottom-1 right-4': props.type === 'mana',
   ' bottom-1 right-1/2 transform translate-x-1/2': props.type === 'endurance',
-  'opacity-0 ': props.ownerId === 'enemy',
+  // 'opacity-0 ': props.ownerId === 'enemy',
 }))
 
 const percentage = computed(() => (owner.value[typeSelectionList[3]] / owner.value[typeSelectionList[5]]) * 100)

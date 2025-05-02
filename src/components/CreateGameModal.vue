@@ -4,8 +4,8 @@ import VModal from '@/components/atoms/VModal.vue'
 import { type Ref, ref } from 'vue'
 import XButton from '@/components/atoms/XButton.vue'
 import { client } from '@/utils/mpClient.ts'
-import RoomInfo = Photon.LoadBalancing.RoomInfo
 import XInput from '@/components/atoms/XInput.vue'
+import $ from '@/global'
 
 const { t }: any = useI18n({ useScope: 'local' })
 
@@ -14,7 +14,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['close', 'created-room'])
 
-const gameName: Ref<string> = ref('')
+const gameName: Ref<string> = ref(($.isDebug && 'Smash Club') || '')
 
 const createGame = () => {
   if (gameName.value.length < 3) {
@@ -50,6 +50,7 @@ const onClose = () => {
           <div class="flex justify-center mb-4">
             <XInput
               v-model="gameName"
+              autofocus
               class="name w-48 text-white focus:text-white rounded-3xl !rounded-r-none leading-[1rem]"
               :placeholder="`Smash battle ${Math.round(Math.random() * 1000)}`"
               @keydown.enter="createGame"

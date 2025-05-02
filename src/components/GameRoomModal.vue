@@ -8,6 +8,9 @@ import { MP_EVENTS } from '@/utils/enums.ts'
 import Actor = Photon.LoadBalancing.Actor
 import { useRoute, useRouter } from 'vue-router'
 import useMatch from '@/use/useMatch.ts'
+import { assetManager } from '@/engine/AssetLoader.ts'
+import type { SpawnPoint } from '@/types/world.ts'
+import { getShuffledStartPositions } from '@/utils/room.ts'
 
 const { t }: any = useI18n({ useScope: 'local' })
 const router = useRouter()
@@ -48,6 +51,9 @@ const toggleReady = (event: any) => {
   isReady.value = !isReady.value
 
   readyMap.value.set(client.myActor().actorNr, isReady.value)
+  client.myActor().setCustomProperties({
+    isReady: isReady.value,
+  })
   client.raiseEvent(MP_EVENTS.READY, {
     message: `${isReady.value}`,
   })
@@ -61,7 +67,7 @@ client.on('READY', ({ data, actorNr }: { data: { message: string }; actorNr: num
 })
 client.on('LEAVE_ROOM', ({ data, actorNr }: { data: { message: string }; actorNr: number }) => {
   readyMap.value.set(actorNr, false)
-  console.log('LEAVE_ROOM actorNr: ', actorNr)
+  // console.log('LEAVE_ROOM actorNr: ', actorNr)
   updateActors()
 })
 const readyPlayersCount = computed(() => {
@@ -77,9 +83,9 @@ client.on('playerJoined', ({ actor }: { actor: any }) => {
       modelPath: actor.name.toLowerCase().includes('smash')
         ? '/models/nature-fairy-1/nature-fairy-1.fbx'
         : '/models/thunder-fairy-1/thunder-fairy-1.fbx',
-      modelPath: actor.name.toLowerCase().includes('smash')
-        ? '/models/nature-fairy-1/nature-fairy-1.fbx'
-        : '/models/thunder-fairy-1/thunder-fairy-1.fbx',
+      // modelPath: actor.name.toLowerCase().includes('smash')
+      //   ? '/models/nature-fairy-1/nature-fairy-1.fbx'
+      //   : '/models/thunder-fairy-1/thunder-fairy-1.fbx',
     })
   }
   readyMap.value.set(actor.actorNr, false)
@@ -101,7 +107,7 @@ client.on('onLeftRoom', () => {
 })
 
 onBeforeUnmount(() => {
-  // !isStartingGame.value && onLeave()
+  !isStartingGame.value && onLeave()
 })
 
 const playerCount = ref(0)
@@ -137,9 +143,14 @@ watch(
 
 const startArena = () => {
   isStartingGame.value = true
+
   router.push({ name: 'battle', params: { worldId: 'mountain-arena' }, query: route.query })
 }
 const onStartGame = () => {
+  client.myRoom().setCustomProperties({
+    startPositions: getShuffledStartPositions(),
+  })
+
   client.raiseEvent(MP_EVENTS.START_GAME, {
     message: `starting game`,
   })
@@ -202,7 +213,7 @@ client.on('START_GAME', ({ data }: { data: { message: string } }) => {
       <div class="flex justify-center items-center gap-4">
         <XButton @click="onLeave">{{ t('leaveGame') }}</XButton>
         <XButton
-          v-if="areAllPlayersReady"
+          v-if="areAllPlayersReady && playersList.length >= 2"
           @click="onStartGame"
           >{{ t('startGame') }}</XButton
         >

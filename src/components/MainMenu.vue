@@ -19,7 +19,8 @@ import RoomsModal from '@/components/RoomsModal.vue'
 import CreateGameModal from '@/components/CreateGameModal.vue'
 import GameRoomModal from '@/components/GameRoomModal.vue'
 import useUser from '@/use/useUser.ts'
-import {GAME_USER_NAME_LABEL} from "@/utils/constants.ts";
+import { GAME_USER_NAME_LABEL } from '@/utils/constants.ts'
+import FairyDustCollected from '@/components/atoms/FairyDustCollected.vue'
 
 const { isStartingGame } = useMatch()
 const route = useRoute()
@@ -186,6 +187,8 @@ client.on('joinedLobby', () => {
         </div>
       </div>
     </div>
+
+    <FairyDustCollected />
     <LoadingBar />
   </div>
 </template>

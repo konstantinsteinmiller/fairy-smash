@@ -98,7 +98,7 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
     if (eventEntry !== null && eventEntry !== undefined) {
       eventEntryName = eventEntry[0]
     }
-    this.emit(eventEntryName, { data, actorNr })
+    this.emit(eventEntryName, { data, actorNr, userId: this.getUserId() })
   }
 
   public onActorJoin(actor: any): void {
@@ -125,7 +125,7 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
     if (state == LBC.State.JoinedLobby) {
       this.emit('joinedLobby')
     }
-    ;(state >= 8 || state === 5) && console.log('___ Photon State:', stateName, `(${state})`)
+    // ;(state >= 8 || state === 5) && console.log('___ Photon State:', stateName, `(${state})`)
   }
 
   public onLeaveRoom(): void {
@@ -140,6 +140,21 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
       console.warn('Cannot leave room: client not connected or not joined to a room.')
     }
     // client.raiseEvent({Photon.LoadBalancing.Constants.OperationCode})
+  }
+
+  public get sortedActors(): Actor[] {
+    return this.actorsArray.sort((a: Actor, b: Actor) => {
+      if (a.actorNr > b.actorNr) return 1
+      if (a.actorNr < b.actorNr) return -1
+      if (a.actorNr === b.actorNr) return 0
+    })
+  }
+
+  public get actorsList(): Actor[] {
+    return client.actorsArray
+  }
+  public get actorsNames(): Actor[] {
+    return client.actorsArray.map(actor => actor.name)
   }
 
   emit(event: string, ...args: any[]): void {

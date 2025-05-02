@@ -342,7 +342,7 @@ export const chargeUtils = () => ({
 export const createOverHeadHealthBar = (entity: any) => {
   let healthBarEventUuid = ''
   const updateHealthBar = (entity: any) => {
-    const healthBarContainer = document.querySelector(`.enemy-life-bar.entity-${entity.uuid}`) as HTMLDivElement
+    const healthBarContainer = document.querySelector(`.enemy-life-bar.actor-${entity.actorNr}-bar`) as HTMLDivElement
 
     if (!healthBarContainer || !entity.mesh) return
     const enemyPosition = entity.mesh.position.clone() // Placeholder for enemy position
@@ -360,6 +360,7 @@ export const createOverHeadHealthBar = (entity: any) => {
     let width = '100%'
     // Scale health bar size based on distance (closer = bigger, farther = smaller)
     let scaleFactor = Math.max(0.3, Math.min(1.0, 5 / distance)) // Clamps scale between 0.5 and 1.5
+
     if (entity.isDead(entity)) {
       scaleFactor = entityScale
       if (scaleFactor < 0.15) {
@@ -376,9 +377,12 @@ export const createOverHeadHealthBar = (entity: any) => {
     healthBarContainer.style.left = `${x}px`
     healthBarContainer.style.top = `${y}px`
 
-    if (screenPosition.z < 0 || screenPosition.z > 1) {
+    const { canSeeEnemy } = entity.detectEnemyThreat(entity, $.player)
+    console.log('canSeeEnemy: ', canSeeEnemy)
+    if (screenPosition.z < 0 || screenPosition.z > 1 || !canSeeEnemy) {
       healthBarContainer.style.opacity = '0'
-    } else {
+    }
+    if (canSeeEnemy) {
       healthBarContainer.style.opacity = '1'
     }
   }
@@ -390,7 +394,7 @@ const threatRaycaster = new Raycaster()
 const DANGEROUS_CHARGE_LEVEL = 0.3
 const AGENT_SAFE_CHARGE_LEVEL = 0.3
 const AGENT_CRITICAL_CHARGE_LEVEL = 0.7
-const RAYCAST_FRAME_INTERVAL = 500
+const RAYCAST_FRAME_INTERVAL = 400
 let lastRaycastTime = Date.now()
 const coverPointsWorker = new Worker(new URL('@/webworkers/coverPointsWorker.ts', import.meta.url), { type: 'module' })
 
@@ -414,7 +418,7 @@ export const controllerAwarenessUtils = () => ({
     const isEntityDangerous = entity.currentSpell.charge > AGENT_SAFE_CHARGE_LEVEL
 
     if (Date.now() - lastRaycastTime < RAYCAST_FRAME_INTERVAL)
-      return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: false }
+      return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: !!entity.lastCanSeeEnemy }
 
     // Set start position at entity's height
     const entityPosition = entity.mesh.position.clone()
@@ -433,12 +437,28 @@ export const controllerAwarenessUtils = () => ({
     const intersects = threatRaycaster.intersectObjects(objectsToIntersect, true)
 
     if (intersects.length > 0) {
-      // intersects[0].object.name === 'ThunderFairyMesh' && console.log('Enemy sees me' /*, intersects[0].object*/)
-      const hasLineOfSight = intersects[0].object === enemy.mesh
+      const filteredMeshesList = intersects.filter((intersect: any) => {
+        return (
+          (intersect.object.type === 'SkinnedMesh' && intersect.object.entityId === enemy.mesh.entityId) ||
+          intersect.object.name === 'cover' ||
+          intersect.object.type === 'Mesh' ||
+          intersect.object.entityType === 'level'
+        )
+      })
+
+      let hasEncounteredLevel = false
+      const hasLineOfSight = filteredMeshesList.some(({ object }) => {
+        const isEnemyMesh = object?.entityId === enemy.mesh.entityId
+        // if (isEnemyMesh && !hasEncounteredLevel) return true
+        hasEncounteredLevel = hasEncounteredLevel || object.entityType === 'level'
+        return isEnemyMesh && !hasEncounteredLevel
+      })
+      entity.lastCanSeeEnemy = hasLineOfSight
       return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: hasLineOfSight }
     }
+    entity.lastCanSeeEnemy = false
 
-    return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: false }
+    return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: entity.lastCanSeeEnemy }
   },
   findCoverPosition: (entity: any, enemy: any): Promise<Vector3> => {
     return new Promise((resolve, reject) => {

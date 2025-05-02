@@ -290,7 +290,6 @@ export default (entity?: any) => {
   $.addEvent('level.cleanup', () => {
     input = null
     $.controls = null
-    console.log('level.cleanup: ', input)
   })
 
   return input

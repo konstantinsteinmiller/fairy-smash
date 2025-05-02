@@ -7,9 +7,14 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { client } from '@/utils/mpClient.ts'
 import { onBeforeUnmount, type Ref, ref } from 'vue'
+import { storeFairyDust } from '@/utils/room.ts'
+import useMatch from '@/use/useMatch.ts'
+import useUser from '@/use/useUser.ts'
 const { t } = useI18n()
 
 const route = useRoute()
+const { isStartingGame } = useMatch()
+const { userFairyDust } = useUser()
 
 const backToMainMenu = () => {
   cleanupLevel(false, true)
@@ -31,15 +36,23 @@ const updateUuid = $.addEvent('renderer.update', () => {
   hasFled.value = !!customProps?.hasFled
 
   hasWon.value = !customProps?.isDead
-  // console.log('Game Over fairy: ', customProps, hasFled.value /*, entitiesList.value*/)
 
-  if (hasFled.value) {
+  if (hasFled.value || hasWon.value) {
+    storeFairyDust()
+    if (hasWon.value) {
+      userFairyDust.value += 2
+    }
+    isStartingGame.value = false
+    $.removeEvent('renderer.update', updateUuid)
+  }
+  if (!hasWon.value && $.isBattleOver) {
+    isStartingGame.value = false
     $.removeEvent('renderer.update', updateUuid)
   }
 })
 
 onBeforeUnmount(() => {
-  console.log('onBeforeUnmount - GameOverScreen')
+  // console.log('onBeforeUnmount - GameOverScreen')
   client.myActor().setCustomProperties({
     hasFled: undefined,
     isDead: undefined,
@@ -112,7 +125,7 @@ en:
   lost: "You've lost!"
   lostSubtitle: "You were not able to extract fairy dust from the battlefield."
   won: "You've won!"
-  wonSubtitle: "Congratulations! You earned some fairy dust."
+  wonSubtitle: "Congratulations! You earned 2 additional fairy dust."
   fled: "You have successfully extracted your gathered fairy dust."
 de:
   backToMainMenu: "Zurück zum Hauptmenü"

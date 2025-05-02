@@ -113,7 +113,6 @@ const RemoteBaseController = ({
       entity.cleanup()
       client.myActor().setCustomProperties({
         hp: undefined,
-        currency: undefined,
         rotation: undefined,
         movementVector: undefined,
         meshPos: undefined,
@@ -128,9 +127,12 @@ const RemoteBaseController = ({
 
     entity.currency = remoteData.currency
     entity.currentVelocity = new Vector3().copy(remoteData.currentVelocity)
-    entity.rigidBody.setNextKinematicRotation(
+    entity.setRotation(
       new Quaternion(remoteData.rotation.x, remoteData.rotation.y, remoteData.rotation.z, remoteData.rotation.w)
     )
+    // entity.rigidBody.setNextKinematicRotation(
+    //   new Quaternion(remoteData.rotation.x, remoteData.rotation.y, remoteData.rotation.z, remoteData.rotation.w)
+    // )
     entity.rigidBody.setNextKinematicTranslation(
       new Rapier.Vector3(remoteData.movementVector.x, remoteData.movementVector.y, remoteData.movementVector.z)
     )

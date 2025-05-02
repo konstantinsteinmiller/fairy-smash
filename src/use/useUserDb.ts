@@ -10,12 +10,14 @@ const useUserDb = ({
   userSoundVolume,
   userMusicVolume,
   userLanguage,
+  userFairyDust,
   userTutorialsDoneMap,
 }: {
   userPlayerName: Ref<string>
   userSoundVolume: Ref<number>
   userMusicVolume: Ref<number>
   userLanguage: Ref<string>
+  userFairyDust: Ref<number>
   userTutorialsDoneMap: Ref<string>
 }) => {
   const { isSplashScreenVisible, isDbInitialized } = useMatch()
@@ -46,6 +48,7 @@ const useUserDb = ({
     objectStore.createIndex('userSoundVolume', 'userSoundVolume', { unique: false })
     objectStore.createIndex('userMusicVolume', 'userMusicVolume', { unique: false })
     objectStore.createIndex('userLanguage', 'userLanguage', { unique: false })
+    objectStore.createIndex('userFairyDust', 'userFairyDust', { unique: false })
     objectStore.createIndex('userTutorialsDoneMap', 'userTutorialsDoneMap', { unique: false })
     // console.log('Database setup complete')
   })
@@ -58,19 +61,23 @@ const useUserDb = ({
       // If the result exists in the database (is not undefined)
       // console.log('request.result: ', request.result)
       if (request.result) {
+        userPlayerName.value = request.result.userPlayerName
         userSoundVolume.value = request.result.userSoundVolume
         userMusicVolume.value = request.result.userMusicVolume
         userLanguage.value = request.result.userLanguage
         if (request.result.userTutorialsDoneMap) {
           userTutorialsDoneMap.value = JSON.parse(request.result.userTutorialsDoneMap)
         }
+        userFairyDust.value = request.result.userFairyDust
+
         localStorage.setItem(GAME_USER_NAME_LABEL, userPlayerName.value)
       } else {
         storeUser({
           userPlayerName: userPlayerName.value,
-          userSoundVolume: userSoundVolume.value,
-          userMusicVolume: userMusicVolume.value,
+          userSoundVolume: +userSoundVolume.value,
+          userMusicVolume: +userMusicVolume.value,
           userLanguage: userLanguage.value,
+          userFairyDust: +userFairyDust.value,
           userTutorialsDoneMap: userTutorialsDoneMap.value,
         })
       }

@@ -9,6 +9,7 @@ const userMusicVolume: Ref<number> = ref(0.05)
 const userLanguage: Ref<string> = ref(navigator?.language?.split('-')[0] || 'en')
 const localStorageUserName = localStorage.getItem(GAME_USER_NAME_LABEL)
 const userPlayerName: Ref<string> = ref(localStorageUserName ?? `AwesomePlayer${Math.ceil(Math.random() * 1000)}`)
+const userFairyDust: Ref<number> = ref(0)
 
 const userTutorialsDoneMap: Ref<any> = ref('{}')
 const tutorialPhase: Ref<string> = ref('')
@@ -31,6 +32,7 @@ const useUser = () => {
     userSoundVolume,
     userMusicVolume,
     userLanguage,
+    userFairyDust,
     userTutorialsDoneMap,
   })
   const setSettingValue = (name: string, value: any) => {
@@ -58,6 +60,7 @@ const useUser = () => {
       userSoundVolume: +userSoundVolume.value,
       userMusicVolume: +userMusicVolume.value,
       userLanguage: userLanguage.value,
+      userFairyDust: +userFairyDust.value,
       userTutorialsDoneMap: userTutorialsDoneMap.value,
     })
   }
@@ -67,6 +70,7 @@ const useUser = () => {
     userSoundVolume,
     userMusicVolume,
     userLanguage,
+    userFairyDust,
     userTutorialsDoneMap,
     tutorialPhase,
     allowTutorial,

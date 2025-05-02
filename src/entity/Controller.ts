@@ -142,10 +142,10 @@ const Controller = ({
       hp: entity.hp,
       currency: entity.currency,
       rotation: {
-        w: entity.getRotation().w,
-        x: entity.getRotation().x,
-        y: entity.getRotation().y,
-        z: entity.getRotation().z,
+        w: entity.mesh.quaternion.w,
+        x: entity.mesh.quaternion.x,
+        y: entity.mesh.quaternion.y,
+        z: entity.mesh.quaternion.z,
       },
       movementVector: {
         x: movementVector.x,

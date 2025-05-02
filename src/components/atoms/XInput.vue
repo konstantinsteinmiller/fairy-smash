@@ -1,5 +1,6 @@
 <template>
   <input
+    ref="input-ref"
     class="focus:text-white"
     :value="model"
     :class="{
@@ -15,8 +16,9 @@
 
 <script setup lang="ts">
 import { IS_FAIRY_SMASH_ROYALE } from '@/utils/constants.ts'
+import { onMounted, useTemplateRef } from 'vue'
 
-defineProps({
+const props = defineProps({
   isSelectAll: {
     type: Boolean,
     default: false,
@@ -24,6 +26,10 @@ defineProps({
   placeholder: {
     type: String,
     default: '',
+  },
+  autofocus: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -35,4 +41,11 @@ const emit = defineEmits(['click'])
 const selectAll = (node: any) => {
   node.select()
 }
+
+const inputRef = useTemplateRef('input-ref')
+props.autofocus &&
+  onMounted(() => {
+    console.log('gameNameRef.value?.focus: ', inputRef.value, inputRef.value?.focus)
+    inputRef.value?.focus()
+  })
 </script>

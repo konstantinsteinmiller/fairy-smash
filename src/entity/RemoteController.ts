@@ -1,5 +1,5 @@
 import type { Guild } from '@/types/entity.ts'
-import { chargeUtils, createOverHeadHealthBar } from '@/utils/controller.ts'
+import { chargeUtils, controllerAwarenessUtils, createOverHeadHealthBar } from '@/utils/controller.ts'
 import { Quaternion, Vector3 } from 'three'
 import { createEnemyMovementStrategy } from '@/entity/MovementStrategy.ts'
 import $ from '@/global'
@@ -19,7 +19,7 @@ interface RemoteControllerProps {
 
 const RemoteController = (config: RemoteControllerProps) => {
   let entity = RemoteArenaController(config)
-  const utils: any = { ...chargeUtils() }
+  const utils: any = { ...chargeUtils(), ...controllerAwarenessUtils() }
   for (const key in utils) {
     entity[key] = utils[key]
   }
@@ -49,7 +49,6 @@ const RemoteController = (config: RemoteControllerProps) => {
   createOverHeadHealthBar(entity)
 
   const movementStrategy = createEnemyMovementStrategy()
-  /* InputController(entity) */ /* moves by client update instead */
 
   let updateEventUuid: string = ''
   const update = (deltaS: number, elapsedTimeInS: number) => {
@@ -78,11 +77,11 @@ const RemoteController = (config: RemoteControllerProps) => {
   client.on('playerLeft', (actor: any) => {
     if (actor.userId !== config.userId) return
     console.warn(`${actor.name} left: `, actor)
-    entity.cleanup()
+    entity?.cleanup()
   })
 
   $.addEvent('level.cleanup', () => {
-    entity.cleanup()
+    entity?.cleanup()
   })
 
   $.entitiesMap.set(entity.uuid, entity)

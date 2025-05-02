@@ -146,7 +146,7 @@ const Crosshair = () => {
 
   $.addEvent('renderer.update', async (deltaInS: number) => {
     const entity = $?.player
-    if (!entity.currentSpell || !entity || entity.isDead() || $.isBattleOver) return
+    if (!entity.currentSpell || !entity || entity.isDead(entity) || $.isBattleOver) return
 
     /* while attack button pressed => rotate crosshair */
     if (!$.controls.attack || forcedSpellRelease || !document.pointerLockElement) return

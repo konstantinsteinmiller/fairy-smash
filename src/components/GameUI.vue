@@ -6,6 +6,9 @@
       alt="logo"
     />
     <StatBar
+      v-for="actor in enemyActorsList"
+      :key="actor.actorNr"
+      :actor-nr="actor.actorNr"
       owner-id="enemy"
       type="life"
     />
@@ -29,6 +32,7 @@
   </template>
 
   <LoadingScreen :level="worldId" />
+  <DamageNumber />
 </template>
 
 <script setup lang="ts">
@@ -43,6 +47,7 @@ import { onBeforeUnmount, onMounted, type Ref, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { GAME_LAST_ROOM } from '@/utils/constants.ts'
 import { client } from '@/utils/mpClient.ts'
+import DamageNumber from '@/components/atoms/DamageNumber.vue'
 
 useMatch()
 const route = useRoute()
@@ -52,6 +57,7 @@ const worldId: Ref<string> = ref(route.params.worldId)
 const isBattleOver: Ref<boolean> = ref(!!$?.isBattleOver)
 const isOnlyOnePlayerLeft: Ref<boolean> = ref(false)
 const fledGame: Ref<boolean> = ref(false)
+const enemyActorsList = client.actorsArray.filter(actor => actor.actorNr !== client.myActor().actorNr)
 
 onMounted(async () => {
   await Game(worldId.value)
@@ -59,23 +65,16 @@ onMounted(async () => {
   const updateUuid = $.addEvent('renderer.update', () => {
     const haveMyFled = !!client.myActor().getCustomProperties()?.hasFled
 
-    if (
-      client.actorsArray.filter(actor => actor.getCustomProperties()?.isDead || actor.getCustomProperties()?.hasFled)
-        .length >=
-      client.actorsArray.length - 1
-    ) {
-      console.log(
-        'client.actorsArray.filter(actor => actor.getCustomProperties()?.isDead).length: ',
-        client.actorsArray.filter(actor => actor.getCustomProperties()?.isDead || actor.getCustomProperties()?.hasFled)
-          .length
-      )
-      console.log('client.actorsArray.length: ', client.actorsArray.length)
-
+    /* check if total - 1 players have exited the game, by e.g. dying or fleeing through extraction portal */
+    const actorsExistedTheGameCount = client.actorsArray.filter(
+      actor => actor.getCustomProperties()?.isDead || actor.getCustomProperties()?.hasFled
+    ).length
+    const totalPlayersInGame = client.actorsArray.length
+    if (actorsExistedTheGameCount >= totalPlayersInGame - 1 && actorsExistedTheGameCount >= 1) {
       $.isBattleOver = true
     }
 
     if ($.isBattleOver || haveMyFled) {
-      console.log('haveMyFled: ', haveMyFled)
       fledGame.value = haveMyFled
       isBattleOver.value = true
       isOnlyOnePlayerLeft.value = $.isBattleOver
@@ -85,13 +84,13 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
-  console.log('client.isJoinedToRoom(): ', client, client.isJoinedToRoom())
+  // console.log('client.isJoinedToRoom(): ', client, client.isJoinedToRoom())
   // debugger
   if (client.isJoinedToRoom()) {
     localStorage.setItem(GAME_LAST_ROOM, client.myRoom().name)
     client.leaveRoom()
   }
-  client.disconnect()
+  // client.disconnect()
 })
 </script>
 

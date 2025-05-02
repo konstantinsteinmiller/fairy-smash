@@ -55,7 +55,12 @@ const ArenaController = ({
   }
 
   entity.checkBattleOver = (updateEventUuid: string) => {
-    if ($.isBattleOver) {
+    const haveMyFled = !!client.myActor().getCustomProperties()?.hasFled
+
+    if ($.isBattleOver || haveMyFled) {
+      if (haveMyFled) {
+        // entity.die(entity)
+      }
       $.removeEvent('renderer.update', updateEventUuid)
     }
   }

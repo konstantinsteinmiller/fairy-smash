@@ -15,8 +15,8 @@ import { createCollidersForGraph } from '@/utils/physics'
 import { Pathfinding, PathfindingHelper } from 'three-pathfinding'
 import type { SpawnPoint } from '@/types/world.ts'
 import FairyDust from '@/entity/FairyDust.ts'
-import Heal from "@/entity/power-ups/Heal.ts";
-import SmallBox from "@/entity/power-ups/SmallBox.ts";
+import Heal from '@/entity/power-ups/Heal.ts'
+import SmallBox from '@/entity/power-ups/SmallBox.ts'
 
 export default async (onFinishedCallback: () => void) => {
   const mountainArena: any = new Object3D()

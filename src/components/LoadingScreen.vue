@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="isLoading"
+    v-if="isLoading && !haveAllPlayerLoadedAssets"
     class="loading-screen fixed top-0 left-0 w-full h-full z-[101]"
   >
     <img
@@ -28,9 +28,10 @@ import FileLoader from '@/engine/FileLoader.ts'
 import $ from '@/global'
 import useMatch from '@/use/useMatch.ts'
 import useUser from '@/use/useUser.ts'
-import { LEVELS, TUTORIALS } from '@/utils/enums.ts'
+import { LEVELS, MP_EVENTS, TUTORIALS } from '@/utils/enums.ts'
 import { startPoisonCloudVFX } from '@/vfx/poison-cloud.ts'
-import { type ComputedRef, onMounted } from 'vue'
+import { computed, type ComputedRef, onMounted, ref } from 'vue'
+import { client } from '@/utils/mpClient.ts'
 
 const props = defineProps({
   level: {
@@ -48,34 +49,52 @@ let current: ComputedRef<number> | number = fileLoader.currentlyLoadedPercent
 const { levelType } = useMatch()
 const { tutorialPhase } = useUser()
 const isArena = props.level.includes('-arena')
+const actorsLoadedMap = ref(new Map<number, boolean>())
+const haveAllPlayerLoadedAssets = computed(() => {
+  return Array.from(actorsLoadedMap.value.values()).filter(v => v).length === client.actorsList.length
+})
+
+let hasExecutedInit = false
+/* add a one time event, that will execute as soon as the Renderer is initialized
+ * and the event will clean up after itself, so it just runs once */
+const initEnvironment = () => {
+  $.controls.setPointerLock()
+
+  if (levelType.value === LEVELS.ARENA) {
+    $.sounds.stop('background')
+    $.sounds.play('battle', { volume: 0.25 * userMusicVolume.value * 0.25, loop: true })
+
+    setTimeout(() => {
+      tutorialPhase.value = TUTORIALS.CHARACTER_CONTROLS
+    }, 3000)
+  }
+  hasExecutedInit = true
+}
+
+client.on('LOADED', data => {
+  actorsLoadedMap.value.set(data?.actorNr, true)
+
+  if (haveAllPlayerLoadedAssets.value) {
+    initEnvironment()
+  }
+})
 
 onMounted(() => {
   if (isArena) {
     levelType.value = LEVELS.ARENA
   }
 
-  let hasExecutedInit = false
-  /* add a one time event, that will execute as soon as the Renderer is initialized
-   * and the event will clean up after itself, so it just runs once */
-  const initEnvironment = () => {
-    if ($.isWorldInitialized && !hasExecutedInit) {
-      $.controls.setPointerLock()
-
-      if (levelType.value === LEVELS.ARENA) {
-        $.sounds.stop('background')
-        $.sounds.play('battle', { volume: 0.25 * userMusicVolume.value * 0.25, loop: true })
-
-        setTimeout(() => {
-          tutorialPhase.value = TUTORIALS.CHARACTER_CONTROLS
-        }, 3000)
-      }
-      hasExecutedInit = true
-    }
-  }
-
   $.addOneTimeEvent('renderer.update', () => {
     $.fileLoader.loadData(() => {
-      initEnvironment()
+      if ($.isWorldInitialized && !hasExecutedInit) {
+        actorsLoadedMap.value.set(client.myActor().actorNr, true)
+
+        client.raiseEvent(MP_EVENTS.LOADED)
+
+        if (haveAllPlayerLoadedAssets.value) {
+          initEnvironment()
+        }
+      }
     })
 
     /* load other assets */

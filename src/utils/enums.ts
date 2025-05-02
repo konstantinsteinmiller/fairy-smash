@@ -4,8 +4,10 @@ export const MP_EVENTS: Record<string, number> = {
   READY: 1,
   LEAVE_ROOM: 2,
   START_GAME: 3,
-  POSITION: 4,
+  LOADED: 4,
+  POSITION: 5,
 }
+
 export const TUTORIALS: ENUM = {
   CHARACTER_CONTROLS: 'characterControl',
   MISSING_MANA: 'missingMana',

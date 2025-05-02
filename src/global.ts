@@ -43,6 +43,7 @@ export interface Global {
   }
   player: any
   enemy: any
+  hitTarget: Ref<any>
   loadingManager: any
   physics: any
   options: any
@@ -111,6 +112,7 @@ const globalState = () => {
     enemiesList: [],
     player: {},
     enemy: {},
+    hitTarget: ref(null),
     loadingManager: loadingManager,
     options: {
       coloredUI: false,

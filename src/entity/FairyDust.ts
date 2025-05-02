@@ -98,7 +98,12 @@ const FairyDust = ({
 export default FairyDust
 
 const MAX_MP_FAIRY_DUST_OBJECTS = 3
-export function createPlayerFairyDustObjects(rotationSpeed: number, position: Vector3, entity: any) {
+export function createPlayerFairyDustObjects(
+  rotationSpeed: number,
+  position: Vector3,
+  entity: any,
+  isGuarantued: boolean = false
+) {
   const clampedRotationSpeed = Math.min(Math.max(rotationSpeed, MIN_CHARGE_SPEED), MAX_ROTATION_SPEED)
   let totalObjects = Math.floor(
     remap(MIN_CHARGE_SPEED, MAX_ROTATION_SPEED, 0, MAX_MP_FAIRY_DUST_OBJECTS, clampedRotationSpeed)
@@ -118,6 +123,9 @@ export function createPlayerFairyDustObjects(rotationSpeed: number, position: Ve
     })
   }
 
+  if (isGuarantued) {
+    totalObjects = 2
+  }
   if (totalObjects === 0) return
 
   const fairyDustObjects = []

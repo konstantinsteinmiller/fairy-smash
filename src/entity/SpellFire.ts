@@ -1,4 +1,4 @@
-import { createFairyDustObjects, createPlayerFairyDustObjects } from '@/entity/FairyDust.ts'
+import { createPlayerFairyDustObjects } from '@/entity/FairyDust.ts'
 import useUser from '@/use/useUser.ts'
 import { MAX_ROTATION_SPEED, MIN_CHARGE_SPEED } from '@/utils/constants.ts'
 import $ from '@/global'
@@ -51,10 +51,13 @@ export default () => {
           triggerHit: true,
         })
         if (hitTarget.guild === 'guild-1') {
-          createPlayerFairyDustObjects(rotationSpeed, hitTarget.position, hitTarget)
+          createPlayerFairyDustObjects(rotationSpeed, hitTarget.position, hitTarget, hitTarget.isDead(hitTarget))
         }
-        console.log('%c unit hit: ', 'color: red', dmg)
-        /* TODO: spawn damage number here */
+
+        $.hitTarget.value = {
+          position: hitTarget.position?.clone(),
+          damage: Math.round(dmg),
+        }
       }
     }
   }
