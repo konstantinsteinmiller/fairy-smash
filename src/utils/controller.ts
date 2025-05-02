@@ -378,7 +378,7 @@ export const createOverHeadHealthBar = (entity: any) => {
     healthBarContainer.style.top = `${y}px`
 
     const { canSeeEnemy } = entity.detectEnemyThreat(entity, $.player)
-    console.log('canSeeEnemy: ', canSeeEnemy)
+
     if (screenPosition.z < 0 || screenPosition.z > 1 || !canSeeEnemy) {
       healthBarContainer.style.opacity = '0'
     }

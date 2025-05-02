@@ -78,15 +78,6 @@ client.on('playerJoined', ({ actor }: { actor: any }) => {
   // console.log('playerJoined: ', actor.name, client.myRoomActors())
   if (client.isMyActor(actor)) {
     isReady.value = false
-
-    // actor.setCustomProperties({
-    //   modelPath: actor.name.toLowerCase().includes('smash')
-    //     ? '/models/nature-fairy-1/nature-fairy-1.fbx'
-    //     : '/models/thunder-fairy-1/thunder-fairy-1.fbx',
-    //   // modelPath: actor.name.toLowerCase().includes('smash')
-    //   //   ? '/models/nature-fairy-1/nature-fairy-1.fbx'
-    //   //   : '/models/thunder-fairy-1/thunder-fairy-1.fbx',
-    // })
   }
   readyMap.value.set(actor.actorNr, false)
 
@@ -151,7 +142,7 @@ const onStartGame = () => {
     startPositions: getShuffledStartPositions(),
   })
 
-  pickPlayerModels()
+  // pickPlayerModels()
 
   client.raiseEvent(MP_EVENTS.START_GAME, {
     message: `starting game`,
@@ -162,6 +153,12 @@ const onStartGame = () => {
 client.on('START_GAME', ({ data }: { data: { message: string } }) => {
   startArena()
 })
+const onSelectedFairy = (modelId: string) => {
+  client.myActor().setCustomProperties({
+    modelPath: `/models/${modelId}/${modelId}.fbx`,
+  })
+  console.log('client.myActor(): ', client.myActor().getCustomProperties().modelPath)
+}
 </script>
 
 <template>
@@ -219,7 +216,9 @@ client.on('START_GAME', ({ data }: { data: { message: string } }) => {
           @click="onStartGame"
           >{{ t('startGame') }}</XButton
         >
-        <CharacterSlider />
+      </div>
+      <div class="relative w-full">
+        <CharacterSlider @selected="onSelectedFairy" />
       </div>
     </template>
   </VModal>
