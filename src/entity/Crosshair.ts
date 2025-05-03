@@ -167,8 +167,16 @@ const Crosshair = () => {
       firstCharge = false
     }
     const elapsedChargeS = (Date.now() - chargeStartTime) / 1000
-    const rotationDuration = remap(0, DEFAULT_CHARGE_DURATION, 0, entityChargeDuration, elapsedChargeS)
-    const rotationN = Math.min(rotationDuration / entityChargeDuration, 1) // 0 - 1 -> value between [0,1]
+    const overdriveChargeDuration = entityChargeDuration / $.overDriveModeScale
+
+    const rotationDuration = remap(
+      0,
+      DEFAULT_CHARGE_DURATION / $.overDriveModeScale,
+      0,
+      overdriveChargeDuration,
+      elapsedChargeS
+    )
+    const rotationN = Math.min(rotationDuration / overdriveChargeDuration, 1) // 0 - 1 -> value between [0,1]
     rotationSpeed = lerp(INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, rotationN)
     entity.currentSpell.charge = rotationN
     crosshairRotatingGroup.rotation.z -= rotationSpeed * deltaInS

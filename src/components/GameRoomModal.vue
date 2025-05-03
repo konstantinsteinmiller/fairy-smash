@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import VModal from '@/components/atoms/VModal.vue'
-import { computed, onBeforeUnmount, onMounted, type Ref, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, type Ref, ref, watch } from 'vue'
 import XButton from '@/components/atoms/XButton.vue'
 import { client } from '@/utils/mpClient.ts'
 import { MP_EVENTS } from '@/utils/enums.ts'
 import Actor = Photon.LoadBalancing.Actor
 import { useRoute, useRouter } from 'vue-router'
 import useMatch from '@/use/useMatch.ts'
-import { getShuffledStartPositions } from '@/utils/room.ts'
+import { getShuffledStartPositions, overDriveModeScale } from '@/utils/room.ts'
 import CharacterSlider from '@/components/organism/CharacterSlider.vue'
 import useUser from '@/use/useUser.ts'
 import $ from '@/global.ts'
+import SpellSlider from '@/components/organism/SpellSlider.vue'
 
 const { t }: any = useI18n({ useScope: 'local' })
 const router = useRouter()
@@ -32,6 +33,7 @@ const onClose = () => {
 
 const isReady: Ref<boolean> = ref(false)
 const readyMap: Ref<Map<number, boolean>> = ref(new Map())
+const isOverDrive: Ref<boolean> = ref(false)
 
 const updateActors = () => {
   setTimeout(() => {
@@ -120,6 +122,10 @@ watch(
   () => props.show,
   () => {
     if (props.show) {
+      /* set overdrive mode if one actor has set overdrive */
+      isOverDrive.value = client.actorsArray.some(actor => actor.getCustomProperties()?.isOverDriveMode)
+      $.overDriveModeScale = isOverDrive.value ? 3 : 1
+
       $.sounds.addAndPlaySound('hello', { volume: 0.55 * userSoundVolume.value * 1 })
       refreshRooms()
       updateActors()
@@ -169,10 +175,17 @@ client.on('START_GAME', ({ data }: { data: { message: string } }) => {
   $.sounds.addAndPlaySound('go', { volume: 0.5 * userSoundVolume.value })
   startArena()
 })
+
 const onSelectedFairy = (modelId: string) => {
   client.myActor().setCustomProperties({
     modelPath: `/models/${modelId}/${modelId}.fbx`,
   })
+}
+
+const onSelectedSpell = (modelId: string) => {
+  // client.myActor().setCustomProperties({
+  //   currentSpell: `/images/${modelId}/${modelId}.fbx`,
+  // })
 }
 </script>
 
@@ -183,7 +196,9 @@ const onSelectedFairy = (modelId: string) => {
     @close="onClose"
   >
     <template #title>
-      <h1 class="mb-4 text-2xl">{{ t('gameName') }}: {{ client.myRoom().name }}</h1>
+      <h1 class="mb-4 text-2xl">
+        {{ isOverDrive ? t('overdrive') : '' }}{{ t('gameName') }}: {{ client.myRoom().name }}
+      </h1>
     </template>
     <template #description>
       <div class="w-full max-w-80 flex flex-col justify-between items-center gap-2">
@@ -234,6 +249,7 @@ const onSelectedFairy = (modelId: string) => {
       </div>
       <div class="relative w-full">
         <CharacterSlider @selected="onSelectedFairy" />
+        <SpellSlider @selected="onSelectedSpell" />
       </div>
     </template>
   </VModal>

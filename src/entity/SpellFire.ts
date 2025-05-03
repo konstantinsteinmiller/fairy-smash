@@ -47,11 +47,11 @@ export default () => {
         /* tell remote player to switch to hit anim and update life */
         const hitTargetActor = client.findActor(hitTarget.userId)
         hitTargetActor?.setCustomProperties({
-          hp: hitTarget.hp - dmg,
+          hp: hitTarget.hp,
           triggerHit: true,
         })
         if (hitTarget.guild === 'guild-1') {
-          createPlayerFairyDustObjects(rotationSpeed, hitTarget.position, hitTarget, hitTarget.isDead(hitTarget))
+          createPlayerFairyDustObjects(rotationSpeed, hitTarget.position, hitTarget)
         }
 
         $.hitTarget.value = {

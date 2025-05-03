@@ -4,7 +4,7 @@ import $ from '@/global.ts'
 import AttackBuffImg from '#/images/buff/swords-128x128.avif'
 import DefenseBuffImg from '#/images/buff/breast-plate-128x128.avif'
 import { type Ref, ref } from 'vue'
-import PowerUpsCollected from "@/components/atoms/PowerUpsCollected.vue";
+import PowerUpsCollected from '@/components/atoms/PowerUpsCollected.vue'
 
 const buffProgressList: Ref<{ progress: number; name: string; finished: boolean; img: any }[]> = ref([])
 const fairyDust = ref(0)
@@ -13,7 +13,7 @@ const updateBuffs = () => {
   buffProgressList.value = []
   const entity = $.player
   if (!entity?.defense) return
-  fairyDust.value = entity.currency.fairyDust
+  fairyDust.value = entity.currency?.fairyDust || 0
 
   const defenseBuff = entity.defense.buff
   const attackBuff = entity.currentSpell.buff

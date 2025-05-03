@@ -86,13 +86,16 @@ client.on('joinedLobby', () => {
   client.myActor().setName(localStorageUserName ?? `AwesomePlayer${Math.ceil(Math.random() * 1000)}`)
   showJoinRoom.value = true
 })
+const onReload = () => {
+  window.location.reload()
+}
 </script>
 
 <template>
   <div class="fixed top-0 left-0 w-full h-full">
     <img
       class="absolute top-0 left-0 w-full h-full"
-      src="@/assets/documentation/promotion/loading_screen_ethereal_vistas_1280x720.jpg"
+      src="@/assets/documentation/promotion/fairy-smash-royale-artwork-1_1280x720.jpg"
       alt="loading-screen-artwork"
     />
 
@@ -149,6 +152,22 @@ client.on('joinedLobby', () => {
         <div class="flex justify-center">
           <XButton
             class="mt-3 with-bg"
+            @click="onReload"
+            >{{ t('reload') }}
+          </XButton>
+        </div>
+
+        <div class="flex justify-center">
+          <XButton
+            class="mt-3 with-bg"
+            :disabled="true"
+            >{{ t('collection') }}
+          </XButton>
+        </div>
+
+        <div class="flex justify-center">
+          <XButton
+            class="mt-3 with-bg"
             @click="() => (isOptionsModalOpen = true)"
             >{{ t('options') }}
           </XButton>
@@ -196,9 +215,13 @@ client.on('joinedLobby', () => {
 en:
   createGame: "Create Game"
   options: "Options"
+  reload: "Reload / Unstuck"
+  collection: "Collection"
   quit: "Quit game"
 de:
   createGame: "Spiel erstellen"
   options: "Einstellungen"
+  reload: "Neu laden / Befreien"
+  collection: "Sammlung"
   quit: "Spiel beenden"
 </i18n>

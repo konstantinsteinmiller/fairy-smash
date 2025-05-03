@@ -8,6 +8,7 @@ import { Scene } from 'three'
 import Light from '@/engine/Light'
 import Renderer from '@/engine/Renderer'
 import Physics from '@/engine/Physics'
+import { client } from '@/utils/mpClient.ts'
 
 export default async (level: string) => {
   await Physics()
@@ -36,6 +37,12 @@ export default async (level: string) => {
 }
 
 export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) => {
+  client?.actorsArray?.forEach(actor =>
+    actor?.setCustomProperties({
+      isOverDriveMode: undefined,
+    })
+  )
+
   $.sounds.stop('background')
   $.sounds.stop('battle')
   if (excludeBattleProtected) {

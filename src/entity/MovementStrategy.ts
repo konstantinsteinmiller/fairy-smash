@@ -21,8 +21,9 @@ export const createPlayerMovementStrategy = () => {
     addFrameDeceleration(entity.currentVelocity, deltaS)
 
     const acc = baseAcceleration.clone()
+    const overdriveScaler = $.overDriveModeScale === 3 ? 1.75 : 1.0
     if (controls.sprint) {
-      acc.multiplyScalar(2.0)
+      acc.multiplyScalar(overdriveScaler * 2.0)
     }
 
     const stopStates = ['cast', 'hit']
@@ -31,17 +32,17 @@ export const createPlayerMovementStrategy = () => {
     }
 
     if (entity.stateMachine.currentState.name === 'jump' && !$.controls.sprint) {
-      acc.multiplyScalar(1.5)
+      acc.multiplyScalar(overdriveScaler * 1.5)
     }
 
     if (controls.forward) {
-      entity.currentVelocity.z += acc.z * deltaS
+      entity.currentVelocity.z += $.overDriveModeScale * acc.z * deltaS
     }
     if (controls.backward) {
-      entity.currentVelocity.z -= acc.z * deltaS
+      entity.currentVelocity.z -= $.overDriveModeScale * acc.z * deltaS
     }
     const strafeVelocity = (controls.left ? 1 : 0) + (controls.right ? -1 : 0)
-    entity.currentVelocity.x += 12 * acc.x * strafeVelocity * deltaS
+    entity.currentVelocity.x += $.overDriveModeScale * 12 * acc.x * strafeVelocity * deltaS
 
     return entity.currentVelocity
   }

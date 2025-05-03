@@ -4,6 +4,13 @@
     :class="containerClasses"
     :style="containerStyles"
   >
+    <div
+      v-if="type === 'life' && props.ownerId === 'enemy'"
+      class="text-white text-xl text-center"
+      style="filter: drop-shadow(0 0 5px #252525)"
+    >
+      {{ entity?.name || entity?.stats?.name }}
+    </div>
     <div class="relative h-full w-full">
       <img
         v-if="ownerId !== 'enemy'"
@@ -108,6 +115,7 @@ let entity: any = $?.[props.ownerId]
 const uuid = ref('')
 
 const isEnemy = props.actorNr !== -1
+entity = isEnemy ? $.enemiesList.find(enemy => enemy.actorNr === props.actorNr) : $?.[props.ownerId] /* player */
 
 const updateCallback = (deltaS: number) => {
   counter++

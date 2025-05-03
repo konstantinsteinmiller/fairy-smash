@@ -22,7 +22,7 @@ const emit = defineEmits(['selected'])
 const frameSrc = '/images/frames/fancy-frame_512x512.png'
 
 const rotateSlider = () => {
-  const slider = document.querySelector('.slider') as HTMLElement
+  const slider = document.querySelector('.character-slider .slider') as HTMLElement
   if (slider) {
     slider.style.transform = `perspective(1000px) rotateX(-16deg) rotateY(${rotationAngle.value}deg)`
   }
@@ -76,9 +76,9 @@ onMounted(() => {
 </script>
 
 <template lang="pug">
-  div.absolute.left-0(class="z-[150] w-[500px] -bottom-[22rem] h-80 flex items-center justify-center gap-4")
+  div.character-slider.absolute.left-0(class="z-[150] w-[500px] -bottom-[22rem] h-80 flex items-center justify-center gap-4")
     button.absolute.left-2.bg-gray-800.text-white.rounded-full.p-2.shadow-md(
-      class="top-1/2 -translate-y-1/2"
+      class="top-1/2 -translate-y-1/2 z-[151]"
       @click="prev"
       aria-label="Previous Model"
     )
@@ -103,7 +103,7 @@ onMounted(() => {
               class="scale-[112%] pointer-events-none w-[120px] h-[150px]"
             )
     button.absolute.right-2.bg-gray-800.text-white.rounded-full.p-2.shadow-md(
-      class="top-1/2 -translate-y-1/2"
+      class="top-1/2 -translate-y-1/2 z-[151]"
       @click="next"
       aria-label="Next Model"
     )
@@ -111,7 +111,7 @@ onMounted(() => {
         path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7")
 </template>
 
-<style lang="css">
+<style lang="css" scoped>
 .banner {
   width: 100%;
   height: 20rem;
@@ -124,7 +124,7 @@ onMounted(() => {
   width: 120px;
   height: 150px;
   top: 10%;
-  left: calc(50% - 60px);
+  left: calc(50% - 50px);
   transform-style: preserve-3d;
   transform: perspective(1000px) rotateX(-16deg) rotateY(0deg);
   z-index: 2;
@@ -161,12 +161,12 @@ onMounted(() => {
 }
 @media screen and (max-width: 1023px) {
   .banner .slider {
-    width: 160px;
-    height: 200px;
+    width: 140px;
+    height: 180px;
     left: calc(50% - 80px);
   }
   .banner .slider .item {
-    transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(300px);
+    transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(150px);
   }
 }
 @media screen and (max-width: 767px) {

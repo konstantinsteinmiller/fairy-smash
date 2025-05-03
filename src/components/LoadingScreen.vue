@@ -10,7 +10,7 @@
     />
     <img
       class="absolute top-0 left-0 w-full h-full"
-      src="../assets/documentation/promotion/loading_screen_ethereal_vistas_1280x720.jpg"
+      src="../assets/documentation/promotion/fairy-smash-royale-artwork-5_1280x720.jpg"
       alt="loading-screen-artwork"
     />
     <ProgressBar

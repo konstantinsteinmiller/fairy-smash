@@ -55,7 +55,7 @@ const Arena = async (level: string) => {
           modelPath: actor.customProperties.modelPath || '/models/nature-fairy-1/nature-fairy-1.fbx',
           stats: {
             name: actor.name,
-            hp: 55,
+            hp: 5,
             previousHp: 100,
             mp: 50,
             previousMp: 50,
@@ -75,7 +75,7 @@ const Arena = async (level: string) => {
           modelPath: actor.customProperties.modelPath,
           stats: {
             name: actor.name,
-            hp: 55,
+            hp: 5,
             previousHp: 100,
             mp: 50,
             previousMp: 50,

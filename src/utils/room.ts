@@ -10,11 +10,11 @@ export const checkRoomGameOver = (entity: any) => {
   })
 }
 
-export const storeFairyDust = () => {
+export const storeFairyDust = (additionalFairyDust: number = 0) => {
   const { setSettingValue, userFairyDust } = useUser()
 
   const myCustomProps = client.myActor().getCustomProperties()
-  userFairyDust.value = userFairyDust.value + myCustomProps?.currency.fairyDust
+  userFairyDust.value = userFairyDust.value + myCustomProps?.currency.fairyDust + additionalFairyDust
   setSettingValue('fairyDust', userFairyDust.value)
   client.myActor().setCustomProperties({
     currency: undefined,

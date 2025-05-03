@@ -43,13 +43,13 @@ export default () => {
     while (accumulatedTime >= FIXED_TIME_STEP) {
       $.oneTimeEventsList.forEach(({ eventName, callback, cleanup }: any) => {
         if (eventName === 'renderer.update') {
-          callback()
-          cleanup()
+          callback?.()
+          cleanup?.()
         }
       })
 
       $.eventsMap?.['renderer.update']?.forEach(({ callback }: any) => {
-        callback?.(FIXED_TIME_STEP, renderer.clock.getElapsedTime())
+        callback?.(FIXED_TIME_STEP, renderer?.clock?.getElapsedTime())
       })
       accumulatedTime -= FIXED_TIME_STEP
     }

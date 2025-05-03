@@ -7,6 +7,7 @@ import { client } from '@/utils/mpClient.ts'
 import XInput from '@/components/atoms/XInput.vue'
 import $ from '@/global'
 import RoomInfo = Photon.LoadBalancing.RoomInfo
+import XSwitch from '@/components/atoms/XSwitch.vue'
 
 const { t }: any = useI18n({ useScope: 'local' })
 
@@ -17,6 +18,7 @@ const emit = defineEmits(['close', 'created-room'])
 
 const gameName: Ref<string> = ref(($.isDebug && 'Smash Club') || '')
 const roomsList = ref([])
+const isOverDrive: Ref<boolean> = ref(false)
 
 const refreshRooms = () => {
   const rooms = client.availableRooms()
@@ -38,13 +40,17 @@ const createGame = () => {
     gameName.value += `-${Math.round(Math.random() * 1000)}`
   }
 
-  console.log('gameName.value: ', gameName.value)
-
   client.createRoom(gameName.value, {
     maxPlayers: 8,
-    roomTTL: 300000 /* 5 min */,
+    roomTTL: 60000 /* 5 min */,
   })
 
+  client.myActor()?.setCustomProperties({
+    isOverDriveMode: isOverDrive.value,
+  })
+  client.myRoom()?.setCustomProperties({
+    isOverDriveMode: isOverDrive.value,
+  })
   emit('close')
   emit('created-room', gameName.value)
 }
@@ -91,6 +97,13 @@ const onClose = () => {
             >
               {{ t('createGame') }}
             </XButton>
+          </div>
+          <div class="ml-1">
+            <XSwitch
+              v-model="isOverDrive"
+              :title="t('useOverdrive')"
+              class="w-full"
+            />
           </div>
         </div>
       </div>

@@ -38,10 +38,7 @@ const updateUuid = $.addEvent('renderer.update', () => {
   hasWon.value = !customProps?.isDead
 
   if (hasFled.value || hasWon.value) {
-    storeFairyDust()
-    if (hasWon.value) {
-      userFairyDust.value += 2
-    }
+    storeFairyDust(hasWon.value ? 2 : 0)
     isStartingGame.value = false
     $.removeEvent('renderer.update', updateUuid)
   }

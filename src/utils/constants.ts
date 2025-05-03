@@ -6,8 +6,8 @@ export const LOOK_AROUND_SPEED = 1.5
 export const MAX_FLY_IMPULSE = 0.2
 export const MIN_FLY_IMPULSE = MAX_FLY_IMPULSE * 0.1
 export const FLY_COST = 11
-export const ENDURANCE_REGEN_SPEED = 10
-export const MP_REGEN_SPEED = 0.5
+export const ENDURANCE_REGEN_SPEED = 20
+export const MP_REGEN_SPEED = 1.2
 
 export type ANIM = 'idle' | 'walk' | 'walk-back' | 'run' | 'run-back' | 'dance' | 'cast' | 'jump' | 'fly' | 'hit'
 export const characterAnimationNamesList: ANIM[] = [
