@@ -11,6 +11,7 @@ export default (position: Vector3) => {
     size: 0.4,
     onCollisionStart: (colliderA, colliderB, uuid, entity) => {
       /* on collide buff logic */
+
       if (entity) {
         entity.currentSpell.buff = {
           ...entity.currentSpell.buff,
@@ -18,7 +19,6 @@ export default (position: Vector3) => {
           duration: 10000,
           endTime: Date.now() + 10000,
         }
-        // console.log('entity.currentSpell.buff: ', entity.currentSpell.buff.value, entity.currentSpell.buff.duration)
       }
 
       /* this is a pickup item, so we remove it here, we might have other logic here later */

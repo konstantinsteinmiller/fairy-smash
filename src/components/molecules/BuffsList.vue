@@ -29,6 +29,7 @@ const updateBuffs = () => {
     if (timeRemaining <= 0) {
       buff.endTime = 0
       buff.duration = 0
+      buff.value = 1
       return
     }
 
@@ -45,7 +46,7 @@ $.addEvent('renderer.update', updateBuffs)
 </script>
 
 <template>
-  <div class="absolute right-2 top-2 flex gap-2">
+  <div class="fixed right-2 top-2 flex gap-2">
     <div
       v-for="buff in buffProgressList"
       :key="buff.name"

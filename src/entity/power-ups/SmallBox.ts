@@ -13,13 +13,9 @@ export default ({ position, onlyInteractableByGuild, fixed }: CollidableItemProp
 
   const collidable: any = CollidableItem({
     name: 'small power up box',
-    collidableId: 'small-power-up-box',
     meshPath: '/models/items/power-ups/power-up.comp.glb',
-    hp: 20,
     size: 0.2,
     onCollisionStart: (collider, otherCollider, uuid, entity: any) => {
-      /* on collide buff logic */
-      console.log('something hit box: ', collider, otherCollider, entity)
       entity.currency.powerUp += 1
       entity.currentSpell.powerUp.value += 0.1
       collidable.emitter.emit('cleanup')

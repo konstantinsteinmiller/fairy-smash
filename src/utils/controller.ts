@@ -48,8 +48,8 @@ export const getBaseStats: any = () => ({
   currentSpell: {
     name: 'shot',
     speed: 1,
-    damage: 25,
-    mana: 25,
+    damage: 15,
+    mana: 8,
     charge: 0 /* [0,1] */,
     powerUp: {
       value: 1,

@@ -55,10 +55,10 @@ const Arena = async (level: string) => {
           modelPath: actor.customProperties.modelPath || '/models/nature-fairy-1/nature-fairy-1.fbx',
           stats: {
             name: actor.name,
-            hp: 5,
+            hp: 100,
             previousHp: 100,
-            mp: 50,
-            previousMp: 50,
+            mp: 100,
+            previousMp: 100,
           },
           startPosition: new Vector3(startPos.x, startPos.y, startPos.z),
           // startPosition: actor.customProperties.modelPath.includes('dragon-young')
@@ -75,10 +75,10 @@ const Arena = async (level: string) => {
           modelPath: actor.customProperties.modelPath,
           stats: {
             name: actor.name,
-            hp: 5,
+            hp: 100,
             previousHp: 100,
-            mp: 50,
-            previousMp: 50,
+            mp: 100,
+            previousMp: 100,
           },
           startPosition: new Vector3(startPos.x, startPos.y, startPos.z),
           startRotation: startPos.quaternion,

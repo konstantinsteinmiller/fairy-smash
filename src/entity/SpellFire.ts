@@ -21,7 +21,15 @@ export default () => {
   let wasOverchargedTutorialShown = false
 
   const damageSelf = (entity: any) => {
-    entity.dealDamage(entity, entity.currentSpell.damage * entity.currentSpell.buff.value * 0.5)
+    entity.dealDamage(
+      entity,
+      entity.currentSpell.damage * entity.currentSpell.buff.value * entity.currentSpell.powerUp.value * 0.5
+    )
+    const hitTargetActor = client.findActor(entity.userId)
+    hitTargetActor?.setCustomProperties({
+      hp: entity.hp,
+      triggerHit: true,
+    })
 
     if (userTutorialsDoneMap.value[TUTORIALS.OVERCHARGED] || wasOverchargedTutorialShown || entity.guild !== 'guild-0')
       return
@@ -30,9 +38,8 @@ export default () => {
   }
 
   singleton.calcDamage = (entity: any, rotationSpeed: number) => {
-    const dmg = entity.currentSpell.damage * entity.currentSpell.buff.value + entity.currentSpell.powerUp.value
+    const dmg = entity.currentSpell.damage * entity.currentSpell.buff.value * entity.currentSpell.powerUp.value
     const damage: number = +remap(MIN_CHARGE_SPEED, MAX_ROTATION_SPEED, dmg * 0.1, dmg, rotationSpeed).toFixed(1)
-    console.log('damage: ', damage)
     return damage
   }
 
@@ -112,7 +119,6 @@ export default () => {
 
       if (isCollidableItem) {
         const collidable = inter.object
-        console.log('collidable: ', collidable, inter.point)
         collidable?.onCollisionStart?.(inter.object, entity, inter.object.uuid, entity, {
           isVfx: true,
           damage: singleton.calcDamage(entity, rotationSpeed),
