@@ -20,18 +20,8 @@ const refreshRooms = () => {
   roomsList.value = rooms.slice(0).filter((room: RoomInfo) => {
     return !room.getCustomProperties()?.hasMatchStarted
   })
+  console.log('isOverDriveMode: ', roomsList.value)
   client.showAvailableRooms(rooms => {})
-  // console.log('availableRooms: ', rooms.map(x => x.name).join(', '), ` - My: ${client.myRoom().name}`)
-  // client.showAvailableRooms((rooms: RoomInfo[]) => {
-  //   console.log(
-  //     'Available Rooms:',
-  //     rooms.map(r => r.name)
-  //   )
-  //   if (rooms.length > 0) {
-  //     // Optionally join the first room
-  //     client.joinGame(rooms[0].name)
-  //   }
-  // })
 }
 
 client.on('joinedLobby', () => {
@@ -49,6 +39,7 @@ client.on('onLeftRoom', (data: any) => {
 onMounted(() => {
   refreshRooms()
 })
+
 watch(
   () => props.show,
   () => {
@@ -83,7 +74,9 @@ const onClose = () => {
           :key="index"
           class="grid grid-cols-3 w-full"
         >
-          <h4 class="col-span-1 text-l flex items-center justify-start text-left text-green-500">{{ t(room.name) }}</h4>
+          <h4 class="col-span-1 text-l flex items-center justify-start text-left text-green-500">
+            {{ room.getCustomProperties()?.isOverDriveMode ? t('overdrive') : '' }}{{ t(room.name) }}
+          </h4>
           <div class="col-span-1 text-md flex items-center justify-center text-green-500">
             {{ `${t(room.playerCount)} / ${t(room.maxPlayers)}` }}
           </div>

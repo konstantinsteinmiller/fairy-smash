@@ -22,8 +22,10 @@ export default {
       metal: 'Metal',
       neutral: 'Metal',
     },
-    players: "Players",
-    leaveGame: "Leave Game"
+    players: 'Players',
+    leaveGame: 'Leave Game',
+    overdrive: 'OvErDrIvE ',
+    useOverdrive: 'Overdrive Mode',
   },
   de: {
     gameName: 'Fairy Smash Royale',
@@ -48,7 +50,9 @@ export default {
       metal: 'Metall',
       neutral: 'Neutral',
     },
-    players: "Spieler",
-    leaveGame: "Spiel Verlassen"
+    players: 'Spieler',
+    leaveGame: 'Spiel Verlassen',
+    overdrive: 'OvErDrIvE ',
+    useOverdrive: 'Overdrive Modus',
   },
 }
