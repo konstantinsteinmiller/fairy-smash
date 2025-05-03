@@ -31,7 +31,7 @@ const Arena = async (level: string) => {
         modelPath: '/models/nature-fairy-1/nature-fairy-1.fbx',
         stats: {
           name: client.myActor().name,
-          hp: 100,
+          hp: $.isDebug ? 5 : 100,
           previousHp: 100,
           mp: 50,
           previousMp: 50,

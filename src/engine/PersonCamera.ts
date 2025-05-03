@@ -1,8 +1,9 @@
 import { STRAFE_ROT_VELOCITY } from '@/utils/constants.ts'
 import $ from '@/global'
 import { clamp } from 'three/src/math/MathUtils.js'
-import { Matrix4, Quaternion, Vector3 } from 'three'
+import { Frustum, Matrix4, Quaternion, Vector3 } from 'three'
 import useUser from '@/use/useUser.ts'
+import clonedeep from 'lodash.clonedeep'
 
 export default () => {
   const { userMouseSensitivity } = useUser()
@@ -189,6 +190,38 @@ export default () => {
     // updateTranslation(elapsedTimeInS)
     updateCamera()
     !$.isThirdPerson && updateHeadBob(elapsedTimeInS)
+  }
+
+  personCamera.isObjectInCameraFrustum = (object: any) => {
+    const frustum = new Frustum()
+    const cameraViewProjectionMatrix = new Matrix4()
+
+    const camera = clonedeep($.camera)
+    // $.camera?.updateMatrixWorld?.() // Ensure camera's world matrix is up-to-date
+    if (!camera?.projectionMatrix) {
+      // console.log('personCamera?.projectionMatrix: ', camera?.projectionMatrix)
+      return false
+    }
+    camera?.projectionMatrix?.multiply(camera?.matrixWorldInverse)
+    cameraViewProjectionMatrix?.copy(camera?.projectionMatrix)
+    frustum?.setFromProjectionMatrix?.(cameraViewProjectionMatrix)
+
+    const mesh = object.children.find((child: any) => child.type === 'SkinnedMesh')
+
+    // For a simple Object3D, check its bounding sphere
+    if (mesh?.boundingSphere) {
+      const worldPosition = mesh.position
+      const scaledRadius = mesh?.boundingSphere.radius * Math.max(...object.scale.toArray())
+      return (
+        frustum?.containsPoint(worldPosition) ||
+        frustum?.intersectsSphere({ center: worldPosition, radius: scaledRadius })
+      )
+    } else {
+      // For objects without geometry or bounding sphere, you might need a more specific check
+      // based on their individual parts or a manually defined bounding box.
+      console.warn('Object has no geometry or bounding sphere, cannot perform accurate frustum check.')
+      return true // Or your specific fallback logic
+    }
   }
 
   $.addEvent('renderer.update', (deltaInS: number) => {

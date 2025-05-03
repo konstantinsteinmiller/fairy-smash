@@ -12,11 +12,10 @@ import shimmeringSphereVFX from '@/vfx/shimmering-sphere.json'
 import fleeOrbVFX from '@/vfx/flee-orb.json'
 import { v4 } from 'uuid'
 
-export type VFXType = 'shot' | 'deathStar' | 'charge' | 'shimmeringSphere' | 'fleeOrb'
+export type VFXType = 'shot' | 'deathStar' | 'shimmeringSphere' | 'fleeOrb'
 const vfxMap: { [key: string]: any } = {
   shot: ShotVFX,
   deathStar: DeathStarVFX,
-  charge: ChargeVFX,
   shimmeringSphere: shimmeringSphereVFX,
   fleeOrb: fleeOrbVFX,
 }

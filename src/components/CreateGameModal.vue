@@ -73,6 +73,7 @@ const onClose = () => {
   <VModal
     v-if="show"
     :is-dialog="true"
+    class="!w-auto p-6"
     @close="onClose"
   >
     <template #title>

@@ -22,7 +22,7 @@ const FairyDust = ({ position, onlyInteractableByGuild, fixed }: CollidableItemP
     size: 0.6,
     onCollisionStart: (_colliderA, _colliderB, _uuid, entity) => {
       /* on collide buff logic */
-      if (entity) {
+      if (entity && entity?.currency?.fairyDust >= 0) {
         entity.currency.fairyDust += 1
         // console.log('entity.currentSpell.buff: ', entity.currentSpell.buff.value, entity.currentSpell.buff.duration)
       }
@@ -107,14 +107,14 @@ export function createPlayerFairyDustObjects(
   )
 
   const actor = client.findActor(entity.userId)
-  if (entity.currency.fairyDust >= totalObjects) {
+  if (entity?.currency?.fairyDust >= totalObjects) {
     entity.currency.fairyDust -= totalObjects
     actor?.setCustomProperties({
       currency: entity.currency,
     })
   } else {
-    totalObjects = entity.currency.fairyDust
-    entity.currency.fairyDust = entity.currency.fairyDust - totalObjects
+    totalObjects = entity?.currency?.fairyDust
+    entity.currency.fairyDust = entity?.currency?.fairyDust - totalObjects
     actor?.setCustomProperties({
       currency: entity.currency,
     })

@@ -64,21 +64,22 @@ onMounted(async () => {
 
   const updateUuid = $.addEvent('renderer.update', () => {
     const haveMyFled = !!client.myActor().getCustomProperties()?.hasFled
+    const isDead = client?.myActor()?.getCustomProperties()?.isDead
 
     /* check if total - 1 players have exited the game, by e.g. dying or fleeing through extraction portal */
     const actorsExistedTheGameCount = client.actorsArray.filter(
       actor => actor.getCustomProperties()?.isDead || actor.getCustomProperties()?.hasFled
     ).length
     const totalPlayersInGame = client.actorsArray.length
-    if (actorsExistedTheGameCount >= totalPlayersInGame - 1 && actorsExistedTheGameCount >= 1) {
+    if ((actorsExistedTheGameCount >= totalPlayersInGame - 1 && actorsExistedTheGameCount >= 1) || isDead) {
       $.isBattleOver = true
     }
 
-    if ($.isBattleOver || haveMyFled) {
+    if ($.isBattleOver || haveMyFled || $.isDead) {
+      $.removeEvent('renderer.update', updateUuid)
       fledGame.value = haveMyFled
       isBattleOver.value = true
       isOnlyOnePlayerLeft.value = $.isBattleOver
-      $.removeEvent('renderer.update', updateUuid)
     }
   })
 })

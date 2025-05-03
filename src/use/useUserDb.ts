@@ -24,7 +24,7 @@ const useUserDb = ({
 }) => {
   const { isSplashScreenVisible, isDbInitialized } = useMatch()
   // Open our database; it is created if it doesn't already exist
-  const request = window.indexedDB.open('user_db', 1)
+  const request = window.indexedDB.open('PlayerPrefs', 1)
 
   // error handler signifies that the database didn't open successfully
   request.addEventListener('error', () => console.error('Database failed to open'))
@@ -56,10 +56,32 @@ const useUserDb = ({
     // console.log('Database setup complete')
   })
 
+  const getPlayerPrefs = () => {
+    try {
+      const PlayerPrefs = CrazyGames?.SDK?.data?.getItem('PlayerPrefs')
+      const data = JSON.parse(PlayerPrefs)
+
+      userPlayerName.value = data.userPlayerName
+      userSoundVolume.value = +data.userSoundVolume
+      userMusicVolume.value = +data.userMusicVolume
+      userMouseSensitivity.value = +data.userMouseSensitivity
+      userLanguage.value = data.userLanguage
+      if (data.userTutorialsDoneMap) {
+        userTutorialsDoneMap.value = JSON.parse(data.userTutorialsDoneMap)
+      }
+      userFairyDust.value = +data.userFairyDust
+    } catch (e) {
+      setTimeout(() => {
+        getPlayerPrefs()
+      }, 200)
+    }
+  }
   function init() {
     // Open transaction, get object store, and get() each video by name
     const objectStore = db.transaction('user_os').objectStore('user_os')
     const request = objectStore.get('user')
+
+    getPlayerPrefs()
     request.addEventListener('success', () => {
       // If the result exists in the database (is not undefined)
       // console.log('request.result: ', request.result)
@@ -74,6 +96,7 @@ const useUserDb = ({
         }
         userFairyDust.value = request.result.userFairyDust
 
+        getPlayerPrefs()
         localStorage.setItem(GAME_USER_NAME_LABEL, userPlayerName.value)
       } else {
         storeUser({
@@ -115,6 +138,8 @@ const useUserDb = ({
       ...params,
       // userTutorialsDoneMap: JSON.stringify(params.userTutorialsDoneMap),
     }
+    CrazyGames?.SDK?.data?.setItem('PlayerPrefs', JSON.stringify(record))
+    CrazyGames?.SDK?.data?.setItem('GAME_USER_NAME_LABEL', params.userPlayerName)
     const request = store.put(record)
 
     localStorage.setItem(GAME_USER_NAME_LABEL, params.userPlayerName)

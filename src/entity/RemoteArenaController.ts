@@ -42,9 +42,10 @@ const RemoteArenaController = ({
     entity[key] = utils[key]
   }
 
-  const checkIsCharacterDead = () => {
+  const { userSoundVolume } = useUser()
+  const checkIsCharacterDead = (deltaS: number) => {
     if (entity.isDead(entity)) {
-      entity.die(entity)
+      entity.die(entity, deltaS, userSoundVolume)
 
       checkRoomGameOver(entity)
       return
@@ -58,9 +59,13 @@ const RemoteArenaController = ({
     if ($.isBattleOver) {
       $.removeEvent('renderer.update', updateEventUuid)
     }
+    if (entity.isDead(entity)) {
+      setTimeout(() => {
+        $.removeEvent('renderer.update', updateEventUuid)
+      }, 500)
+    }
   }
 
-  const { userSoundVolume } = useUser()
   let soundCounter = 1
   const checkPoisonCloud = () => {
     soundCounter++
@@ -77,7 +82,7 @@ const RemoteArenaController = ({
     const isFinished = controllerUpdate(deltaS)
     if (!isFinished) return false
 
-    checkIsCharacterDead()
+    checkIsCharacterDead(deltaS)
 
     checkPoisonCloud()
 

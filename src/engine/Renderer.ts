@@ -41,6 +41,10 @@ export default () => {
     }
 
     while (accumulatedTime >= FIXED_TIME_STEP) {
+      /* safeguard from freezing screen on missed animation frames */
+      if (accumulatedTime > FIXED_TIME_STEP * 15) {
+        accumulatedTime = FIXED_TIME_STEP * 5
+      }
       $.oneTimeEventsList.forEach(({ eventName, callback, cleanup }: any) => {
         if (eventName === 'renderer.update') {
           callback?.()
@@ -57,11 +61,19 @@ export default () => {
     /* auto clear here to be able to render uiScene on top
      * of the animated object scene */
     renderer.autoClear = true
-    renderer.render($.scene, $.camera)
+    try {
+      renderer.render($.scene, $.camera)
+    } catch (e) {
+      console.error('Renderer error: ', e)
+    }
     renderer.autoClear = false
     if ($.showCrosshair) {
       renderer.clearDepth()
-      renderer.render($.uiScene, $.uiCamera)
+      try {
+        renderer.render($.uiScene, $.uiCamera)
+      } catch (e) {
+        console.error('Renderer error: ', e)
+      }
     }
 
     requestAnimationFrame(tick)

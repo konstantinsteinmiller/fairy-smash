@@ -140,6 +140,7 @@ const globalState = () => {
   global.isBattleOver = false
   global.isEngineInitialized = false
   global.isWorldInitialized = false
+  global.sdkInitialized = false
   global.overDriveModeScale = 1
   global.vfxList = []
 

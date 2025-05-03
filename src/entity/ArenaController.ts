@@ -42,9 +42,10 @@ const ArenaController = ({
     entity[key] = utils[key]
   }
 
-  const checkIsCharacterDead = () => {
+  const { userSoundVolume } = useUser()
+  const checkIsCharacterDead = (deltaS: number) => {
     if (entity.isDead(entity)) {
-      entity.die(entity)
+      entity.die(entity, deltaS, userSoundVolume)
 
       checkRoomGameOver(entity)
       return
@@ -63,9 +64,15 @@ const ArenaController = ({
       }
       $.removeEvent('renderer.update', updateEventUuid)
     }
+    if (entity.isDead(entity)) {
+      $.isDead = true
+      client.myActor().setCustomProperties({ isDead: true })
+      setTimeout(() => {
+        $.removeEvent('renderer.update', updateEventUuid)
+      }, 300)
+    }
   }
 
-  const { userSoundVolume } = useUser()
   let soundCounter = 1
   const checkPoisonCloud = () => {
     soundCounter++
@@ -82,7 +89,7 @@ const ArenaController = ({
     const isFinished = controllerUpdate(deltaS)
     if (!isFinished) return false
 
-    checkIsCharacterDead()
+    checkIsCharacterDead(deltaS)
 
     checkPoisonCloud()
 

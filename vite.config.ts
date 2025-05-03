@@ -7,7 +7,7 @@ import ReactivityTransform from '@vue-macros/reactivity-transform/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/',
+  base: './',
   plugins: [
     vue(),
     glsl(),

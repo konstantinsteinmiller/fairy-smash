@@ -14,7 +14,10 @@ export const storeFairyDust = (additionalFairyDust: number = 0) => {
   const { setSettingValue, userFairyDust } = useUser()
 
   const myCustomProps = client.myActor().getCustomProperties()
-  userFairyDust.value = userFairyDust.value + myCustomProps?.currency.fairyDust + additionalFairyDust
+  if (!myCustomProps?.currency?.fairyDust) {
+    console.log('Why is fairyDust not available?', myCustomProps)
+  }
+  userFairyDust.value = userFairyDust.value + (myCustomProps?.currency?.fairyDust || 0) + additionalFairyDust
   setSettingValue('fairyDust', userFairyDust.value)
   client.myActor().setCustomProperties({
     currency: undefined,

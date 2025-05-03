@@ -9,14 +9,13 @@ import { client } from '@/utils/mpClient.ts'
 import { onBeforeUnmount, type Ref, ref } from 'vue'
 import { storeFairyDust } from '@/utils/room.ts'
 import useMatch from '@/use/useMatch.ts'
-import useUser from '@/use/useUser.ts'
 const { t } = useI18n()
 
 const route = useRoute()
 const { isStartingGame } = useMatch()
-const { userFairyDust } = useUser()
 
 const backToMainMenu = () => {
+  $.sdkInitialized && CrazyGames.SDK.game.gameplayStop()
   cleanupLevel(false, true)
   setTimeout(() => {
     router.push({ name: 'main-menu', query: route.query })
@@ -32,17 +31,16 @@ const hasWon: Ref<boolean> = ref(!client.myActor().getCustomProperties()?.isDead
 
 const updateUuid = $.addEvent('renderer.update', () => {
   fairy.value = entitiesList.value.find(entity => entity.userId === client?.myActor()?.userId)
-  const customProps = client.myActor().getCustomProperties()
+  const customProps = client.myActor().getCustomProperties() || $.isDead
   hasFled.value = !!customProps?.hasFled
 
   hasWon.value = !customProps?.isDead
 
-  if (hasFled.value || hasWon.value) {
+  if (hasFled.value || hasWon.value || $.isDead) {
     storeFairyDust(hasWon.value ? 2 : 0)
-    isStartingGame.value = false
-    $.removeEvent('renderer.update', updateUuid)
-  }
-  if (!hasWon.value && $.isBattleOver) {
+    if (hasWon.value) {
+      $.sdkInitialized && CrazyGames.SDK.game.happytime()
+    }
     isStartingGame.value = false
     $.removeEvent('renderer.update', updateUuid)
   }
@@ -61,19 +59,19 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="battle-over-screen fixed top-0 left-0 w-full h-full z-[101]">
-    <div class="relative top-4 left-0 bg-transparent flex justify-center items-start w-full h-[200px]">
+    <div class="relative top-4 left-0 bg-transparent flex justify-center items-start w-full max-h-[25vh]">
       <img
-        class="max-w-[300] h-[200px] z-[5]"
+        class="max-w-[220px] max-h-[25%] z-[5]"
         src="@/assets/documentation/fairy-smash-royale-banner_609x372.png"
-        alt="logo"
+        alt="Fairy Smash Royale logo"
       />
     </div>
 
-    <div class="flex flex-col justify-start mt-16 items-center h-full flex-wrap">
+    <div class="flex flex-col justify-start mt-8 items-center h-full flex-wrap">
       <!--      <h1 class="text-red-800 lg:text-[8rem] text-[5rem] shrink-0 text-center">GAME OVER</h1>-->
       <template v-if="!hasFled">
         <h2
-          class="lg:text-[6rem] text-[4rem] shrink-0 text-center"
+          class="md:text-[2rem] lg:text-[2.5rem] text-[1.5rem] shrink-0 text-center"
           :class="{
             'text-green-600': hasWon,
             'text-red-800': !hasWon,
@@ -82,7 +80,7 @@ onBeforeUnmount(() => {
           {{ hasWon ? t('won') : t('lost') }}
         </h2>
         <h2
-          class="text-white lg:text-[4rem] text-[2rem] shrink-0 text-center"
+          class="text-white md:text-[2rem] lg:text-[2.5rem] text-[1.5rem] shrink-0 text-center"
           :class="{ 'glass ': hasWon }"
         >
           {{ hasWon ? t('wonSubtitle') : t('lostSubtitle') }}
@@ -90,7 +88,7 @@ onBeforeUnmount(() => {
       </template>
       <h3
         v-else
-        class="glass lg:text-[3rem] text-[2rem] shrink-0 text-center"
+        class="glass md:text-[2.5rem] lg:text-[3rem] text-[2rem] shrink-0 text-center"
       >
         {{ t('fled') }}
       </h3>

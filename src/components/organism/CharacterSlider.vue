@@ -9,7 +9,8 @@ const modelsList = [
   '/models/yeti-young/preview_400x463.jpg',
   '/models/dragon-old/preview_400x463.jpg',
   '/models/psi-nightmare/preview_400x463.jpg',
-  '/models/mushroom-middle/preview_400x463.jpg',
+  // '/models/mushroom-middle/preview_400x463.jpg',
+  // '/models/scorpion-middle/preview_400x463.jpg',
   '/models/fire-harpy/preview_400x463.jpg',
 ]
 
@@ -77,7 +78,7 @@ onMounted(() => {
 </script>
 
 <template lang="pug">
-  div.character-slider.absolute.left-0(class="z-[150] w-[500px] -bottom-[22rem] h-80 flex items-center justify-center gap-4")
+  div.character-slider(class="z-[150] lg:w-[500px] w-[420px] md:scale-100 scale-[80%] h-80 flex items-center justify-center gap-4")
     button.absolute.left-2.bg-gray-800.text-white.rounded-full.p-2.shadow-md(
       class="top-1/2 -translate-y-1/2 z-[151]"
       @click="prev"
@@ -160,14 +161,14 @@ onMounted(() => {
   width: 100%;
   height: 100%;
 }
-@media screen and (max-width: 1023px) {
+@media screen and (max-width: 1060px) {
   .banner .slider {
-    width: 140px;
-    height: 180px;
-    left: calc(50% - 80px);
+    width: 110px;
+    height: 140px;
+    left: calc(50% - 50px);
   }
   .banner .slider .item {
-    transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(150px);
+    transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(140px);
   }
 }
 @media screen and (max-width: 767px) {

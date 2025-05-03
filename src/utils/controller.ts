@@ -23,6 +23,7 @@ import { clamp, lerp } from 'three/src/math/MathUtils'
 import { Color, Object3D, type Quaternion, Raycaster, Vector3 } from 'three'
 import { v4 as uuidv4 } from 'uuid'
 import { ref } from 'vue'
+import Rapier from '@dimforge/rapier3d-compat'
 
 export const getBaseStats: any = () => ({
   uuid: uuidv4(),
@@ -48,7 +49,7 @@ export const getBaseStats: any = () => ({
   currentSpell: {
     name: 'shot',
     speed: 1,
-    damage: 15,
+    damage: $.isDebug ? 150 : 15,
     mana: 8,
     charge: 0 /* [0,1] */,
     powerUp: {
@@ -155,52 +156,58 @@ export const statsUtils = () => {
     isDead(target: any) {
       return target?.hp <= 0
     },
-    die(entity: any, deltaS: number) {
-      const { userSoundVolume } = useUser()
-      const targetScale = 0.001
+    die(entity: any, deltaS: number, userSoundVolume: number) {
+      const targetScale = 0.01
       const scaleFactor = 0.93
       const position: Vector3 = entity.mesh.position.clone()
-      position.setY(position.y + 0.1)
 
-      createVFX({
-        vfxName: 'deathStar',
-        position: position,
-        removeOnDeath: true,
-      })
-      removePath()
+      if (entity.isDying === undefined) {
+        entity.isDying = true
 
-      const deathEventUuid: string = $.addEvent('renderer.update', () => {
-        const mesh = entity.mesh
-        const originalScale = entity.mesh.scale.clone()
+        createVFX({
+          vfxName: 'deathStar',
+          position: position,
+          removeOnDeath: true,
+        })
+        removePath()
 
-        /* shrink body mesh to target scale */
-        if (mesh.scale.x > targetScale) {
-          const scale = originalScale.y * scaleFactor
-          mesh.scale.set(scale, scale, scale)
-        }
-        if (entity.mesh.scale.y < targetScale) {
-          $.removeEvent('renderer.update', deathEventUuid)
-          entity.mesh.geometry?.dispose()
-          entity.mesh.material?.dispose()
-          $.scene.remove(entity.mesh)
+        const deathEventUuid: string = $.addEvent('renderer.update', () => {
+          const mesh = entity.mesh
+          const originalScale = entity.mesh.scale.clone()
 
-          // console.log('%c is dying: ', 'color: violet')
-        }
-      })
+          /* shrink body mesh to target scale */
+          if (mesh.scale.x > targetScale) {
+            const scale = originalScale.y * scaleFactor
+            mesh.scale.set(scale, scale, scale)
+          }
+          if (entity.mesh.scale.y < targetScale) {
+            $.removeEvent('renderer.update', deathEventUuid)
+            entity?.mesh?.geometry?.dispose()
+            entity?.mesh?.material?.dispose()
+            if (entity.mesh) {
+              $.scene.remove(entity.mesh)
+            }
+          }
+        })
+
+        $.sounds.addAndPlayPositionalSound(entity, 'death', { volume: 0.25 * (userSoundVolume?.value || 0.3) * 0.25 })
+
+        setTimeout(() => {
+          /* cleanup all sound effects on the character */
+          const soundsGroup = entity?.mesh?.children.find((child: any) => child.name === 'sounds-group')
+          if (soundsGroup) {
+            soundsGroup.children.forEach((child: any) => soundsGroup.remove(child))
+          }
+        }, 700)
+      }
 
       entity.utils.takeOffFrames = 0
       entity.lastCoverPosition = null
       entity.path = null
       const movementVector = calcRapierMovementVector(entity, new Vector3(0, 0, 0), deltaS)
-      entity.rigidBody.setNextKinematicTranslation(movementVector)
-
-      $.sounds.addAndPlayPositionalSound(entity, 'death', { volume: 0.25 * userSoundVolume.value * 0.25 })
-
-      /* cleanup all sound effects on the character */
-      const soundsGroup = entity.mesh.children.find((child: any) => child.name === 'sounds-group')
-      if (soundsGroup) {
-        soundsGroup.children.forEach((child: any) => soundsGroup.remove(child))
-      }
+      const vec = new Rapier.Vector3(movementVector.x, $.isDebug ? 25 : -5000, movementVector.z)
+      entity.rigidBody.setNextKinematicTranslation(vec)
+      entity.mesh.position.set(vec.x, vec.y, vec.z)
     },
   }
 }
@@ -320,17 +327,6 @@ export const chargeUtils = () => ({
     scaleBehaviour.scaleB.a = doubleScale
     scaleBehaviour.scaleB.b = doubleScale
   },
-  async createChargeIndicator(entity: any) {
-    if ((!$.isThirdPerson && entity.guild === 'guild-0') || !entity?.center)
-      return { eventUuid: '', nebulaSystem: null }
-    const position = entity.center.clone()
-    const { nebulaSystem, emitter: chargeEmitter } = await createVFX({
-      vfxName: 'charge',
-      position: position,
-      removeOnDeath: false,
-    })
-    return { nebulaSystem, chargeEmitter }
-  },
   calcAttackMpDamage(entity: any, rotationSpeed: number) {
     const mpCost = +remap(MIN_CHARGE_SPEED, MAX_ROTATION_SPEED, 0, entity.currentSpell.mana, rotationSpeed).toFixed(2)
 
@@ -384,8 +380,7 @@ export const createOverHeadHealthBar = (entity: any) => {
 
     if (screenPosition.z < 0 || screenPosition.z > 1 || !canSeeEnemy) {
       healthBarContainer.style.opacity = '0'
-    }
-    if (canSeeEnemy) {
+    } else {
       healthBarContainer.style.opacity = '1'
     }
   }
@@ -457,7 +452,7 @@ export const controllerAwarenessUtils = () => ({
         return isEnemyMesh && !hasEncounteredLevel
       })
       entity.lastCanSeeEnemy = hasLineOfSight
-      return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: hasLineOfSight }
+      return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: entity.lastCanSeeEnemy }
     }
     entity.lastCanSeeEnemy = false
 

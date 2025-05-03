@@ -65,7 +65,7 @@ onMounted(() => {
 </script>
 
 <template lang="pug">
-  div.spell-slider.absolute.left-0(class="z-[150] w-[500px] bottom-[12.5rem] h-[12rem] flex items-center justify-center gap-4")
+  div.spell-slider(class="z-[150] lg:w-[500px] w-[420px] md:scale-100 scale-[80%] -md:mt-4 h-[12rem] flex items-center justify-center gap-4")
     div.banner.relative
       div.slider(:style="`--spell-quantity: ${quantity}`" :class="{ 'auto-rotate': isAutoRotating }")
         div.item.relative(
@@ -132,7 +132,7 @@ onMounted(() => {
   .banner .slider {
     width: 70px;
     height: 100px;
-    left: calc(50% - 80px);
+    left: calc(50% - 30px);
   }
   .banner .slider .item {
     transform: rotateY(calc((var(--spell-position) - 1) * (360 / var(--spell-quantity)) * 1deg)) translateZ(120px);
@@ -142,7 +142,7 @@ onMounted(() => {
   .banner .slider {
     width: 60px;
     height: 92px;
-    left: calc(50% - 50px);
+    left: calc(50% - 40px);
   }
   .banner .slider .item {
     transform: rotateY(calc((var(--spell-position) - 1) * (360 / var(--spell-quantity)) * 1deg)) translateZ(95px);

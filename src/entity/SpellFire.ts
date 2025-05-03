@@ -143,8 +143,6 @@ export default () => {
       //     &&
       //   console.log('intersect: ', intersect.object)*/
 
-      console.log('intersect.object: ', intersect.object)
-
       createShotVFX(intersect, entity, directionN, () => {
         singleton.assessDamage(entity, intersect, rotationSpeed)
       })

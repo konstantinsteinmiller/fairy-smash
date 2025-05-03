@@ -26,7 +26,7 @@ onMounted(() => {
   }
 
   updateUuid = $.addEvent('renderer.update', () => {
-    if (isStartingGame.value && fairyDust.value !== $.player?.currency?.fairyDust) {
+    if (isStartingGame.value && fairyDust.value !== $?.player?.currency?.fairyDust) {
       fairyDust.value = $.player?.currency?.fairyDust
     }
   })

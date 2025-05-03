@@ -32,11 +32,13 @@ const isCreatGameModalOpen = ref(false)
 const isGameRoomOpen = ref(false)
 const isRoomsModalOpen = ref(false)
 const isNative = import.meta.env.VITE_PLATTFORM === 'native'
+const { userPlayerName, setSettingValue } = useUser()
 
 showCustomPointer()
 
 const startArena = () => {
   isStartingGame.value = true
+  CrazyGames.SDK.game.gameplayStart()
   router.push({ name: 'battle', params: { worldId: 'mountain-arena' }, query: route.query })
 }
 
@@ -69,6 +71,8 @@ const onClick = (e: MouseEvent) => {
 }
 
 onMounted(() => {
+  $.sdkInitialized && CrazyGames.SDK.game.gameplayStop()
+  $.sdkInitialized && CrazyGames.SDK.game.loadingStart()
   preloadAssets()
   game$.addEventListener('click', onClick, false)
   game$.addEventListener('mousemove', onUnlockedMouseMove, false)
@@ -89,6 +93,34 @@ client.on('joinedLobby', () => {
 const onReload = () => {
   window.location.reload()
 }
+
+const loadCrazyGamesSDK = async () => {
+  await CrazyGames.SDK.init()
+  $.sdkInitialized = true
+  try {
+    const user = await CrazyGames.SDK.user.getUser()
+    // console.log(`crazy games user `, user, user?.username)
+    // console.log('CrazyGames.SDK.environment: ', CrazyGames.SDK.environment)
+    const isNotLocal = CrazyGames.SDK.environment !== 'local'
+    if (
+      user?.username &&
+      (userPlayerName.value === '' || userPlayerName.value.includes('AwesomePlayer')) &&
+      isNotLocal
+    ) {
+      console.log(
+        'user.username: ',
+        user.username,
+        userPlayerName.value,
+        userPlayerName.value.includes('AwesomePlayer')
+      )
+      userPlayerName.value = user.username
+      setSettingValue('playerName', userPlayerName.value)
+    }
+  } catch (e) {
+    console.log('Get user error: ', e)
+  }
+}
+loadCrazyGamesSDK()
 </script>
 
 <template>
@@ -99,110 +131,114 @@ const onReload = () => {
       alt="loading-screen-artwork"
     />
 
-    <div class="relative top-4 left-0 bg-transparent flex justify-center items-start w-full h-[200px]">
-      <img
-        class="w-auto h-[200px] z-[5]"
-        src="@/assets/documentation/fairy-smash-royale-banner_609x372.png"
-        alt="logo"
-      />
-    </div>
+    <div class="grid grid-cols-2 relative">
+      <div class="flex w-full my-3 mt-1 mt-8">
+        <div class="mx-16">
+          <!--          <div class="flex justify-center">-->
+          <!--            <XButton-->
+          <!--              class="with-bg mt-3 leading-[1rem]"-->
+          <!--              :disabled="loadingProgress < 99.8"-->
+          <!--              @click="startArena"-->
+          <!--              @keydown.enter="startArena"-->
+          <!--            >-->
+          <!--              {{ t('startArena') }}-->
+          <!--            </XButton>-->
+          <!--          </div>-->
 
-    <div class="flex w-full my-3 mt-1 mt-8">
-      <div class="mx-auto">
-        <div class="flex justify-center">
-          <XButton
-            class="with-bg mt-3 leading-[1rem]"
-            :disabled="loadingProgress < 99.8"
-            @click="startArena"
-            @keydown.enter="startArena"
+          <div class="flex justify-center">
+            <XButton
+              class="with-bg mt-3 leading-[1rem]"
+              @click="() => (isCreatGameModalOpen = true)"
+            >
+              {{ t('createGame') }}
+            </XButton>
+          </div>
+
+          <!--        <div class="flex justify-center">-->
+          <!--          <XButton-->
+          <!--            class="with-bg mt-3 leading-[1rem]"-->
+          <!--            :disabled="!showJoinRoom"-->
+          <!--            @click="client.joinGame('test')"-->
+          <!--            @keydown.enter="startArena"-->
+          <!--          >-->
+          <!--            {{ t('createRoom') }}-->
+          <!--          </XButton>-->
+          <!--        </div>-->
+
+          <div class="flex justify-center">
+            <XButton
+              class="mt-3 with-bg"
+              :disabled="!showJoinRoom"
+              @click="() => (isRoomsModalOpen = true)"
+              >{{ t('rooms') }}
+            </XButton>
+          </div>
+
+          <div class="flex justify-center">
+            <XButton
+              class="mt-3 with-bg"
+              @click="onReload"
+              >{{ t('reload') }}
+            </XButton>
+          </div>
+
+          <div class="flex justify-center">
+            <XButton
+              class="mt-3 with-bg"
+              :disabled="true"
+              >{{ t('collection') }}
+            </XButton>
+          </div>
+
+          <div class="flex justify-center">
+            <XButton
+              class="mt-3 with-bg"
+              @click="() => (isOptionsModalOpen = true)"
+              >{{ t('options') }}
+            </XButton>
+          </div>
+
+          <OptionsModal
+            :show="isOptionsModalOpen"
+            @close="() => (isOptionsModalOpen = false)"
+          />
+          <CreateGameModal
+            :show="isCreatGameModalOpen"
+            @close="() => (isCreatGameModalOpen = false)"
+            @created-room="() => (isGameRoomOpen = true)"
+          />
+          <GameRoomModal
+            :show="isGameRoomOpen"
+            @close="() => (isGameRoomOpen = false)"
+            @left-room="() => (isRoomsModalOpen = true)"
+          />
+          <RoomsModal
+            :show="isRoomsModalOpen"
+            @close="() => (isRoomsModalOpen = false)"
+            @joined-room="() => (isGameRoomOpen = true)"
+          />
+
+          <div
+            v-if="isNative"
+            class="flex justify-center"
           >
-            {{ t('startArena') }}
-          </XButton>
+            <XButton
+              class="mt-3 with-bg"
+              @click="onExit"
+              >{{ t('quit') }}
+            </XButton>
+          </div>
         </div>
+      </div>
 
-        <div class="flex justify-center">
-          <XButton
-            class="with-bg mt-3 leading-[1rem]"
-            @click="() => (isCreatGameModalOpen = true)"
-          >
-            {{ t('createGame') }}
-          </XButton>
-        </div>
-
-        <!--        <div class="flex justify-center">-->
-        <!--          <XButton-->
-        <!--            class="with-bg mt-3 leading-[1rem]"-->
-        <!--            :disabled="!showJoinRoom"-->
-        <!--            @click="client.joinGame('test')"-->
-        <!--            @keydown.enter="startArena"-->
-        <!--          >-->
-        <!--            {{ t('createRoom') }}-->
-        <!--          </XButton>-->
-        <!--        </div>-->
-
-        <div class="flex justify-center">
-          <XButton
-            class="mt-3 with-bg"
-            :disabled="!showJoinRoom"
-            @click="() => (isRoomsModalOpen = true)"
-            >{{ t('rooms') }}
-          </XButton>
-        </div>
-
-        <div class="flex justify-center">
-          <XButton
-            class="mt-3 with-bg"
-            @click="onReload"
-            >{{ t('reload') }}
-          </XButton>
-        </div>
-
-        <div class="flex justify-center">
-          <XButton
-            class="mt-3 with-bg"
-            :disabled="true"
-            >{{ t('collection') }}
-          </XButton>
-        </div>
-
-        <div class="flex justify-center">
-          <XButton
-            class="mt-3 with-bg"
-            @click="() => (isOptionsModalOpen = true)"
-            >{{ t('options') }}
-          </XButton>
-        </div>
-
-        <OptionsModal
-          :show="isOptionsModalOpen"
-          @close="() => (isOptionsModalOpen = false)"
+      <div
+        class="absolute top-2 left-1/2 -translate-x-1/2 bg-transparent flex justify-center items-start w-full h-[110px] pointer-events-none"
+      >
+        <img
+          class="w-auto h-[110px] z-[5] pointer-events-none"
+          src="@/assets/documentation/fairy-smash-royale-banner_609x372.png"
+          alt="logo"
         />
-        <CreateGameModal
-          :show="isCreatGameModalOpen"
-          @close="() => (isCreatGameModalOpen = false)"
-          @created-room="() => (isGameRoomOpen = true)"
-        />
-        <GameRoomModal
-          :show="isGameRoomOpen"
-          @close="() => (isGameRoomOpen = false)"
-          @left-room="() => (isRoomsModalOpen = true)"
-        />
-        <RoomsModal
-          :show="isRoomsModalOpen"
-          @close="() => (isRoomsModalOpen = false)"
-          @joined-room="() => (isGameRoomOpen = true)"
-        />
-
-        <div
-          v-if="isNative"
-          class="flex justify-center"
-        >
-          <XButton
-            class="mt-3 with-bg"
-            @click="onExit"
-            >{{ t('quit') }}
-          </XButton>
-        </div>
       </div>
     </div>
 
@@ -215,12 +251,14 @@ const onReload = () => {
 en:
   createGame: "Create Game"
   options: "Options"
+  rooms: "Public Games"
   reload: "Reload / Unstuck"
   collection: "Collection"
   quit: "Quit game"
 de:
   createGame: "Spiel erstellen"
   options: "Einstellungen"
+  rooms: "Offene Spiele"
   reload: "Neu laden / Befreien"
   collection: "Sammlung"
   quit: "Spiel beenden"

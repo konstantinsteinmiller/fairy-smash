@@ -40,7 +40,15 @@ const updateActors = () => {
     let actors = client.myRoomActors()
     const actorsList = Object.values(actors) || []
     // console.log('actorsList: ', actorsList, client.myRoom()?.loadBalancingClient.actorsArray)
-    playersList.value = actorsList as Actor[]
+    playersList.value = /*[
+      ...actorsList,
+      ...actorsList,
+      ...actorsList,
+      ...actorsList,
+      ...actorsList,
+      ...actorsList,
+      ...actorsList,
+    ] */ actorsList as Actor[]
   }, 200)
 }
 
@@ -156,6 +164,7 @@ watch(
 const startArena = () => {
   isStartingGame.value = true
 
+  CrazyGames.SDK.game.gameplayStart()
   router.push({ name: 'battle', params: { worldId: 'mountain-arena' }, query: route.query })
 }
 const onStartGame = () => {
@@ -193,16 +202,17 @@ const onSelectedSpell = (modelId: string) => {
   <VModal
     v-if="show"
     :is-dialog="true"
+    class="!translate-x-[-50%] !left-[25%] ml-3 max-w-[22rem] !w-auto p-6 md:px-6 md:py-4 px-4 py-3"
     @close="onClose"
   >
     <template #title>
-      <h1 class="mb-4 text-2xl">
+      <h1 class="mb-4 text-2xl break-words break-before-all">
         {{ isOverDrive ? t('overdrive') : '' }}{{ t('gameName') }}: {{ client.myRoom().name }}
       </h1>
     </template>
     <template #description>
       <div class="w-full max-w-80 flex flex-col justify-between items-center gap-2">
-        <div class="w-full mb-6">
+        <div class="w-full mb-6 max-h-[21rem] overscroll-auto overflow-y-auto overflow-x-hidden">
           <div class="mb-4 grid grid-cols-2 text-left">
             <h5>{{ t('players') }}</h5>
             <!--            <div class="text-green-500">{{ playerCount }} / {{ client.myRoom().maxPlayers }}</div>-->
@@ -214,9 +224,9 @@ const onSelectedSpell = (modelId: string) => {
           <div
             v-for="player in playersList"
             :key="player?.actorNr"
-            class="mb-6 grid grid-cols-2 text-left"
+            class="mb-2 grid grid-cols-2 text-left"
           >
-            <h4 class="text-green-500">
+            <h4 class="text-green-500 !text-[12px] leading-[1rem]">
               {{ player?.name }}
             </h4>
             <div
@@ -225,7 +235,7 @@ const onSelectedSpell = (modelId: string) => {
             >
               <XButton
                 ref="readyButton"
-                class="input-button h-9 leading-[0.5rem]"
+                class="input-button"
                 :class="{ 'bg-gray-200 text-black border-green-500 pointer-disabled': gameName?.length < 3 }"
                 @click="toggleReady"
                 @keydown.enter="toggleReady"
@@ -251,9 +261,14 @@ const onSelectedSpell = (modelId: string) => {
           >{{ t('startGame') }}</XButton
         >
       </div>
-      <div class="relative w-full">
-        <CharacterSlider @selected="onSelectedFairy" />
-        <SpellSlider @selected="onSelectedSpell" />
+
+      <div class="absolute bottom-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-full">
+        <div class="relative w-full">
+          <div class="absolute top-0 left-0 md:translate-x-[80%] translate-x-[75%] h-[500px] md:-translate-y-[43%] -translate-y-[37%]">
+            <SpellSlider @selected="onSelectedSpell" />
+            <CharacterSlider @selected="onSelectedFairy" />
+          </div>
+        </div>
       </div>
     </template>
   </VModal>

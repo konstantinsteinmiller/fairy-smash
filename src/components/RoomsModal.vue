@@ -58,13 +58,16 @@ const onClose = () => {
   <VModal
     v-if="show"
     :is-dialog="true"
+    class="!w-auto px-8 py-6"
     @close="onClose"
   >
     <template #title>
       <h1 class="mb-2 text-2xl">{{ t('title') }}</h1>
     </template>
     <template #description>
-      <div class="w-full mb-6 max-w-80 flex flex-col justify-between items-center gap-2">
+      <div
+        class="w-full mb-6 pr-2 max-w-80 flex flex-col justify-between items-center gap-2 max-h-80 overscroll-auto overflow-y-auto overflow-x-hidden"
+      >
         <div class="grid grid-cols-3 w-full">
           <h5 class="col-span-1 text-l flex items-center justify-start text-left">{{ t('gameName') }}</h5>
           <h5 class="col-span-1 text-md flex items-center justify-center">{{ t('players') }}</h5>
@@ -74,11 +77,11 @@ const onClose = () => {
           :key="index"
           class="grid grid-cols-3 w-full"
         >
-          <h4 class="col-span-1 text-l flex items-center justify-start text-left text-green-500">
+          <h4 class="col-span-1 !text-sm flex items-center justify-start text-left text-green-500">
             {{ room.getCustomProperties()?.isOverDriveMode ? t('overdrive') : '' }}{{ t(room.name) }}
           </h4>
           <div class="col-span-1 text-md flex items-center justify-center text-green-500">
-            {{ `${t(room.playerCount)} / ${t(room.maxPlayers)}` }}
+            {{ `${t(room.playerCount)} / 8` }}
           </div>
           <XButton @click="client.joinRoom(room.name, { createIfNotExists: true })">{{ t('joinGame') }}</XButton>
         </div>

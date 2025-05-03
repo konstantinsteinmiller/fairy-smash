@@ -70,6 +70,10 @@ input.glass
   padding: 0.25rem 1rem
   border: 1px solid var(--glass-color)
   color: var(--glass-color)
+  @media screen and (max-width: 1060px)
+    font-size: 12px
+    line-height: 1.5rem
+    padding: 0.125rem 1rem
 
 input.glass:focus
   color: #ffffff
@@ -86,6 +90,12 @@ select.glass
   > option
     background-color: rgba(198, 193, 215, 0.51)
     color: black
+
+@media screen and (max-width: 1060px)
+  select.glass
+    font-size: 12px
+    line-height: 1.2rem
+    padding: 0.125rem 0.5rem
 
 .switch.glass
   div
@@ -145,7 +155,10 @@ button.glass
     color: rgba(255, 255, 255, 0.5)
     cursor: not-allowed
     pointer-events: none
-
+  @media screen and (max-width: 1060px)
+    font-size: 12px
+    line-height: 1.2rem
+    padding: 0.25rem 0.5rem
 
 button.danger:not(.glass)
   background-color: #ff3255
@@ -204,6 +217,10 @@ h3.glass, h4.glass
   background-clip: text
   color: transparent
   filter: drop-shadow(0 0 4px #353535)
+  @media screen and (max-width: 1060px)
+    font-size: 1.0rem
+    line-height: 1.05rem
+    padding-right: 0.375rem
 
 p.glass.card
   color: var(--glass-color)
@@ -213,15 +230,22 @@ p.glass.card
   background-clip: text
   color: transparent
   padding-right: 0.5rem
+  @media screen and (max-width: 1060px)
+    padding-right: 0.375rem
 
 .glass.card h3, .glass.card h4
   background: linear-gradient(to right, var(--vue-gradient-1), var(--vue-gradient-2), var(--vue-gradient-3))
   background-clip: text
   color: transparent
-  padding-right: 0.5rem
+  @media screen and (max-width: 1060px)
+    font-size: 1.0rem
+    line-height: 1.05rem
 
 .glass.card h1, .glass.card h2
   font-size: 1.5rem
+  @media screen and (max-width: 1060px)
+    font-size: 1.25rem
+    line-height: 1.1rem
 
 .glass.card h5, .glass.card h6
   background: linear-gradient(to right, var(--low-heading-color-1), var(--low-heading-color-2))

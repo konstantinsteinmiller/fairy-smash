@@ -28,7 +28,6 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
   }
 
   public onConnectedToMaster(): void {
-    console.log('Connected to Master Server')
     // this.joinLobby()
   }
 
@@ -37,13 +36,13 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
   }
 
   public onJoinedLobby(): void {
-    console.log('Joined Lobby')
+    // console.log('Joined Lobby')
     // You are now automatically in the lobby
   }
 
   public joinGame(roomName: string): void {
     if (this.state() === LBC.State.JoinedLobby) {
-      console.log(`Joining room: ${roomName}`)
+      // console.log(`Joining room: ${roomName}`)
       this.joinRoom(roomName)
     } else {
       console.warn('Not joined to the lobby yet.')
@@ -129,7 +128,7 @@ class SimplePhotonClient extends Photon.LoadBalancing.LoadBalancingClient {
   }
 
   public onLeaveRoom(): void {
-    console.log('onLeaveRoom: ', client, client?.isJoinedToRoom)
+    // console.log('onLeaveRoom: ', client, client?.isJoinedToRoom)
     if (client?.isJoinedToRoom()) {
       client.raiseEvent(MP_EVENTS.LEAVE_ROOM, {
         message: `left`,

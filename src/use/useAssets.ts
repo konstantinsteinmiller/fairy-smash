@@ -2,6 +2,7 @@ import { assetManager } from '@/engine/AssetLoader.ts'
 import { characterAnimationNamesList } from '@/utils/constants.ts'
 import { prependBaseUrl } from '@/utils/function.ts'
 import { ref } from 'vue'
+import $ from "@/global.ts";
 
 const loadingProgress = ref(0)
 const areAllAssetsLoaded = ref(false)
@@ -15,9 +16,6 @@ export default () => {
     '/models/items/power-ups/breast_plate.comp.glb',
     '/models/items/power-ups/heal.comp.glb',
     '/models/items/power-ups/power-up.comp.glb',
-    '/models/items/power-ups/power-up-box.comp.glb',
-    '/models/items/power-ups/power-up-big.comp.glb',
-    '/models/items/power-ups/power-up-pickup.comp.glb',
     '/images/glow.png',
     '/images/star/star-64x64.png',
     '/images/fairy-dust/fairy-dust-100x120.png',
@@ -35,7 +33,7 @@ export default () => {
     '/models/dragon-old/dragon-old.fbx',
     '/models/fire-harpy/fire-harpy.fbx',
     '/models/psi-nightmare/psi-nightmare.fbx',
-    '/models/mushroom-middle/mushroom-middle.fbx',
+    // '/models/mushroom-middle/mushroom-middle.fbx',
   ]
   const spawnPointsList = ['/worlds/arenas/mountain-arena-spawn-points.comp.glb']
 
@@ -102,6 +100,7 @@ export default () => {
         if (resolvedPromises === promisesLength) {
           // console.log('done - resolvedPromises: ', resolvedPromises, promisesLength)
           loadingProgress.value = 100
+          $.sdkInitialized && CrazyGames.SDK.game.loadingStop()
         }
         interval && clearInterval(interval)
       }, 200)
