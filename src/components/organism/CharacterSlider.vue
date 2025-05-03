@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { prependBaseUrl } from '@/utils/function.ts'
 
 const modelsList = [
   '/models/nature-fairy-1/preview_400x463.jpg',
@@ -19,7 +20,7 @@ const rotationAngle = ref(0)
 
 const emit = defineEmits(['selected'])
 
-const frameSrc = '/images/frames/fancy-frame_512x512.png'
+const frameSrc = prependBaseUrl('/images/frames/fancy-frame_512x512.png')
 
 const rotateSlider = () => {
   const slider = document.querySelector('.character-slider .slider') as HTMLElement
@@ -93,7 +94,7 @@ onMounted(() => {
           @click="selectItem(index)"
         )
           div.relative.w-full.h-full
-            img.w-full.h-full.object-contain.rounded-md.shadow-md(:src="model" :alt="`Model ${index + 1}`"
+            img.w-full.h-full.object-contain.rounded-md.shadow-md(:src="prependBaseUrl(model)" :alt="`Model ${index + 1}`"
               :class="{ '': index === currentIndex }"
             )
             img.frame.absolute.inset-0.w-full.h-full(

@@ -27,6 +27,18 @@ expected features:
 - charging spell indicator
 - Multiplayer with up to 8 players using Photon
 
+### Menu
+![Main menu](https://github.com/konstantinsteinmiller/fairy-smash/blob/master/src/assets/documentation/fairy-smash-royale-start-screen.png)
+
+### Gallery
+![galery for selection](https://github.com/konstantinsteinmiller/fairy-smash/blob/master/src/assets/documentation/fairy-smash-royale-gallery.png)
+
+### Gameplay
+![Gameplay](https://github.com/konstantinsteinmiller/fairy-smash/blob/master/src/assets/documentation/fairy-smash-royale-gameplay.png)
+
+### Extraction
+![extraction](https://github.com/konstantinsteinmiller/fairy-smash/blob/master/src/assets/documentation/fairy-smash-royale-extraction.png)
+
 Meshes generated with [meshy.ai](https://www.meshy.ai/workspace) - 
 Music generated with [Tem.Polor](https://www.tempolor.com/) -
 Sounds generated with [elevenLabs](https://elevenlabs.io/app/sound-effects/generate) -

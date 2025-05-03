@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { prependBaseUrl } from '@/utils/function.ts'
 
 const modelsList = [
   '/images/spell-card/shot.png',
@@ -74,7 +75,7 @@ onMounted(() => {
           @click="selectItem(index)"
         )
           div.relative.w-full.h-full
-            img.w-full.h-full.object-fit.rounded-md.shadow-md(:src="model" :alt="`Model ${index + 1}`"
+            img.w-full.h-full.object-fit.rounded-md.shadow-md(:src="prependBaseUrl(model)" :alt="`Model ${index + 1}`"
               :class="{ '': index === currentIndex }"
             )
 </template>
