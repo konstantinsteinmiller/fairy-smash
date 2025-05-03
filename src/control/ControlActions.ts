@@ -130,17 +130,17 @@ export default (defaultControlsConfig: EnumStringToList) => {
       onActivate: (entity: any, hasChanged: boolean) => {
         /* do once */
         if (hasChanged) {
-          $.isPaused = !$.isPaused
-          $.controls.removePointerLock()
-          /* print the current position of the player mesh and save it as Vector3 to clipboard */
-          const pos = $.player.mesh.position
-          const groupId = $.level.pathfinder.getGroup($.level.zone, pos)
-          const closest = $.level.pathfinder.getClosestNode(pos, $.level.zone, groupId, true)
-          closest &&
-            console.log('pos: ', pos, 'closest?.centroid:', JSON.stringify(closest?.centroid, undefined, 2), groupId)
-          navigator.clipboard.writeText(JSON.stringify($.player.mesh.position, undefined, 2))
-
-          console.log(JSON.stringify($.player.mesh.quaternion, undefined, 2))
+          // $.isPaused = !$.isPaused
+          // $.controls.removePointerLock()
+          // /* print the current position of the player mesh and save it as Vector3 to clipboard */
+          // const pos = $.player.mesh.position
+          // const groupId = $.level.pathfinder.getGroup($.level.zone, pos)
+          // const closest = $.level.pathfinder.getClosestNode(pos, $.level.zone, groupId, true)
+          // closest &&
+          //   console.log('pos: ', pos, 'closest?.centroid:', JSON.stringify(closest?.centroid, undefined, 2), groupId)
+          // navigator.clipboard.writeText(JSON.stringify($.player.mesh.position, undefined, 2))
+          //
+          // console.log(JSON.stringify($.player.mesh.quaternion, undefined, 2))
         }
       },
       onDeactivate: (entity: any) => {},
