@@ -102,7 +102,7 @@ const Crosshair = () => {
 
   let canFire = false
   let forcedSpellRelease = false
-  let chargeEmitter: any = null
+  const chargeEmitter: any = null
 
   /* release shot if attack button is released */
   $.addEvent('controls.attack1.up', () => {
@@ -116,8 +116,8 @@ const Crosshair = () => {
 
     entity.calcAttackMpDamage(entity, rotationSpeed)
 
-    chargeEmitter?.emit('cleanup')
-    chargeIndicatorNebulaSystem = null
+    // chargeEmitter?.emit('cleanup')
+    // chargeIndicatorNebulaSystem = null
     chargeStartTime = Date.now()
   })
 
@@ -141,7 +141,7 @@ const Crosshair = () => {
     }
   })
 
-  let chargeIndicatorNebulaSystem: any = null
+  const chargeIndicatorNebulaSystem: any = null
   let firstCharge = true
 
   $.addEvent('renderer.update', async (deltaInS: number) => {
@@ -152,13 +152,13 @@ const Crosshair = () => {
     if (!$.controls.attack || forcedSpellRelease || !document.pointerLockElement) return
 
     if (!chargeIndicatorNebulaSystem) {
-      chargeIndicatorNebulaSystem = true
-      const { nebulaSystem, chargeEmitter: emitter } = await entity.createChargeIndicator(entity)
-      chargeIndicatorNebulaSystem = nebulaSystem
-      chargeEmitter = emitter
+      // chargeIndicatorNebulaSystem = true
+      // const { nebulaSystem, chargeEmitter: emitter } = await entity.createChargeIndicator(entity)
+      // chargeIndicatorNebulaSystem = nebulaSystem
+      // chargeEmitter = emitter
     }
     if (chargeIndicatorNebulaSystem) {
-      entity.updateChargeIndicator(entity, rotationSpeed, chargeIndicatorNebulaSystem)
+      // entity.updateChargeIndicator(entity, rotationSpeed, chargeIndicatorNebulaSystem)
     }
 
     /* ~ 12 - 4 seconds */
@@ -215,8 +215,8 @@ const Crosshair = () => {
       $.controls.attack = false
       crosshairDots.visible = false
       crosshairStar.visible = false
-      chargeEmitter.emit('cleanup')
-      chargeIndicatorNebulaSystem = null
+      // chargeEmitter.emit('cleanup')
+      // chargeIndicatorNebulaSystem = null
       entity.calcAttackMpDamage(entity, rotationSpeed)
     }
   })
