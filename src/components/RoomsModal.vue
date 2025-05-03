@@ -20,7 +20,7 @@ const refreshRooms = () => {
   roomsList.value = rooms.slice(0).filter((room: RoomInfo) => {
     return !room.getCustomProperties()?.hasMatchStarted
   })
-  console.log('isOverDriveMode: ', roomsList.value)
+
   client.showAvailableRooms(rooms => {})
 }
 

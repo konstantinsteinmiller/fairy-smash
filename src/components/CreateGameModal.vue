@@ -110,7 +110,6 @@ const onClose = () => {
     </template>
     <template #buttons>
       <div class="flex flex-col justify-center items-center gap-4">
-        <!--        <XButton @click="client.leaveRoom">{{ t('leaveGame') }}</XButton>-->
         <XButton @click="onClose">{{ t('close') }}</XButton>
       </div>
     </template>

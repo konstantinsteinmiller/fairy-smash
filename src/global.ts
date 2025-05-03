@@ -128,8 +128,9 @@ const globalState = () => {
   // console.log('XXstate: ', state)
 
   /* init this game state with defaults */
-  global.enableDebug = false
-  // global.debugPhysics = true
+  // global.enableDebug = false
+  // global.enableDebug = true
+  global.debugPhysics = true
   global.showCursor = true
   global.showCrosshair = true
   global.isThirdPerson = true

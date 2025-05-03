@@ -219,16 +219,20 @@ const onSelectedSpell = (modelId: string) => {
             <h4 class="text-green-500">
               {{ player?.name }}
             </h4>
-            <XButton
+            <div
               v-if="player?.actorNr === client.myActor().actorNr"
-              ref="readyButton"
-              class="input-button leading-[0.5rem]"
-              :class="{ 'bg-gray-200 text-black border-green-500 pointer-disabled': gameName?.length < 3 }"
-              @click="toggleReady"
-              @keydown.enter="toggleReady"
+              class="flex justify-center items-center"
             >
-              {{ isReady ? t('ready') : t('notReady') }}
-            </XButton>
+              <XButton
+                ref="readyButton"
+                class="input-button h-9 leading-[0.5rem]"
+                :class="{ 'bg-gray-200 text-black border-green-500 pointer-disabled': gameName?.length < 3 }"
+                @click="toggleReady"
+                @keydown.enter="toggleReady"
+              >
+                {{ isReady ? t('ready') : t('notReady') }}
+              </XButton>
+            </div>
             <div
               v-else
               class="rounded-full w-6 h-6 justify-self-center items-center"

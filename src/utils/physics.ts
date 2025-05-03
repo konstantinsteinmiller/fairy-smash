@@ -104,10 +104,13 @@ export const createRigidBodyEntity = ({ position, entity }: { position: Vector3;
   }
 }
 
-export const createEntityColliderBox = (entity: any) => {
-  const width = entity.colliderRadius * 2.3
+export const createEntityColliderBox = (entity: any, options: { size?: number }) => {
+  const size = options?.size
+  const width = size ? size : entity.colliderRadius * 2.3
+  const height = size ? size : entity.halfHeight * 2
+  const depth = size ? size : entity.colliderRadius * 1.2
   const colliderBox: any = new Mesh(
-    new BoxGeometry(width, entity.halfHeight * 2, entity.colliderRadius * 1.2),
+    new BoxGeometry(width, height, depth),
     new MeshBasicMaterial({ color: 'blue', wireframe: true })
   )
   const pos = entity.mesh.position.clone()
@@ -118,8 +121,28 @@ export const createEntityColliderBox = (entity: any) => {
   colliderBox.position.copy(pos)
   colliderBox.name = 'colliderBox'
   colliderBox.entityId = entity.uuid
+  colliderBox.collidableId = entity.collidableId
   colliderBox.visible = false
   // colliderBox.visible = true
   colliderBox.scale.set(100, 100, 100)
   entity.mesh.add(colliderBox)
+}
+
+export const createCollidableItemColliderBox = (mesh: any, options: { size?: number }) => {
+  const size = options?.size
+  const width = size ? size : mesh.colliderRadius * 2.3
+  const height = size ? size : mesh.halfHeight * 2
+  const depth = size ? size : mesh.colliderRadius * 1.2
+  const colliderBox: any = new Mesh(
+    new BoxGeometry(width, height, depth),
+    new MeshBasicMaterial({ color: 'blue', wireframe: true })
+  )
+  const pos = mesh.position.clone()
+  colliderBox.position.copy(pos)
+  colliderBox.name = 'colliderBox'
+  colliderBox.collidableId = mesh.collidableId
+  colliderBox.visible = false
+  // colliderBox.visible = true
+  colliderBox.scale.set(100, 100, 100)
+  mesh.add(colliderBox)
 }

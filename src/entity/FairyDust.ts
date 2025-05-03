@@ -8,15 +8,12 @@ import { ColliderDesc, RigidBodyDesc } from '@dimforge/rapier3d-compat'
 import { Vector3 } from 'three'
 import { client } from '@/utils/mpClient.ts'
 
-const FairyDust = ({
-  position,
-  onlyInteractableByGuild,
-  fixed,
-}: {
+interface CollidableItemProps {
   position: Vector3
   onlyInteractableByGuild?: Guild
   fixed?: boolean
-}) => {
+}
+const FairyDust = ({ position, onlyInteractableByGuild, fixed }: CollidableItemProps) => {
   const { vfx, vfxObject }: any = startFairyDustVFX(position, !!fixed)
 
   const collidable: any = CollidableItem({

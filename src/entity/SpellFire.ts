@@ -29,9 +29,15 @@ export default () => {
     wasOverchargedTutorialShown = true
   }
 
-  singleton.assessDamage = (entity: any, intersect: any, rotationSpeed: number) => {
-    const dmg = entity.currentSpell.damage * entity.currentSpell.buff.value
+  singleton.calcDamage = (entity: any, rotationSpeed: number) => {
+    const dmg = entity.currentSpell.damage * entity.currentSpell.buff.value + entity.currentSpell.powerUp.value
     const damage: number = +remap(MIN_CHARGE_SPEED, MAX_ROTATION_SPEED, dmg * 0.1, dmg, rotationSpeed).toFixed(1)
+    console.log('damage: ', damage)
+    return damage
+  }
+
+  singleton.assessDamage = (entity: any, intersect: any, rotationSpeed: number) => {
+    const damage: number = singleton.calcDamage(entity, rotationSpeed)
 
     const entityId: string | undefined = intersect?.object?.entityId || intersect?.object?.parent?.entityId
     /* find intersected target and deal damage */
@@ -63,9 +69,11 @@ export default () => {
   }
 
   singleton.fireRaycaster = (rotationSpeed: number, entity: any, target: any) => {
+    const remoteActor = client.findActor(entity.userId)
     if (rotationSpeed >= MAX_ROTATION_SPEED) {
       damageSelf(entity)
       entity.stateMachine.setState('hit')
+      remoteActor?.setCustomProperties({ triggerHit: true })
       return
     }
     // entity.stateMachine.setState('cast')
@@ -94,23 +102,42 @@ export default () => {
     // const ignoredObjectNames = ['rayTrace']
     /* find only SkinnedMesh of the characterController and enemyController */
     const intersect = intersects.find((inter: any) => {
+      // console.log('inter.object: ', inter.object)
       const entityId: string | undefined = inter.object?.parent?.entityId
-      const isColliderBox = inter.object?.name === 'colliderBox' && entity.uuid !== inter.object?.entityId
+      const isCollidableItem =
+        inter.object?.collidableId !== undefined ||
+        inter.object?.children.some((child: any) => child?.collidableId !== undefined)
+      const isColliderBox =
+        (inter.object?.name === 'colliderBox' && entity.uuid !== inter.object?.entityId) || isCollidableItem
+
+      if (isCollidableItem) {
+        const collidable = inter.object
+        console.log('collidable: ', collidable, inter.point)
+        collidable?.onCollisionStart?.(inter.object, entity, inter.object.uuid, entity, {
+          isVfx: true,
+          damage: singleton.calcDamage(entity, rotationSpeed),
+        })
+      }
       return (
         // !ignoredObjectTypes.includes(inter.object.type) &&
         // !ignoredObjectNames.includes(inter.object.name) /*
         //  */ &&
-        isColliderBox || (entityId && entityId !== `${entity.uuid}`) || inter.object?.entityType === 'level'
+        isColliderBox ||
+        isCollidableItem ||
+        (entityId && entityId !== `${entity.uuid}`) ||
+        inter.object?.entityType === 'level'
       )
     })
     if (intersect?.point) {
       createRayTrace(intersect.point)
 
-      intersect.object.type !== 'SkinnedMesh' &&
-        intersect.object.name !== 'WaterArena' &&
-        intersect.object.name !== 'colliderBox' /*
-          &&
-        console.log('intersect: ', intersect.object)*/
+      // intersect.object.type !== 'SkinnedMesh' &&
+      //   intersect.object.name !== 'WaterArena' &&
+      //   intersect.object.name !== 'colliderBox' /*
+      //     &&
+      //   console.log('intersect: ', intersect.object)*/
+
+      console.log('intersect.object: ', intersect.object)
 
       createShotVFX(intersect, entity, directionN, () => {
         singleton.assessDamage(entity, intersect, rotationSpeed)

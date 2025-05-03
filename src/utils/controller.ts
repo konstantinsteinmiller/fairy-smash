@@ -51,6 +51,9 @@ export const getBaseStats: any = () => ({
     damage: 25,
     mana: 25,
     charge: 0 /* [0,1] */,
+    powerUp: {
+      value: 1,
+    },
     buff: {
       name: 'attack',
       value: 1,

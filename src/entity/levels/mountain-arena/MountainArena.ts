@@ -116,7 +116,9 @@ export default async (onFinishedCallback: () => void) => {
   powerUpSpawnPointsList.forEach((spPos: any) => {
     /* generate power ups - permanent damage booster */
     const position = new Vector3().copy(spPos).add(new Vector3(0, 0.5, 0))
-    const powerUp = SmallBox(position)
+    const powerUp = SmallBox({
+      position,
+    })
     powerUp.addToLevel(mountainArena)
   })
 
