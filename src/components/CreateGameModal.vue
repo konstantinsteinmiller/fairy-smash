@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import VModal from '@/components/atoms/VModal.vue'
-import { type Ref, ref } from 'vue'
+import { type Ref, ref, watch } from 'vue'
 import XButton from '@/components/atoms/XButton.vue'
 import { client } from '@/utils/mpClient.ts'
 import XInput from '@/components/atoms/XInput.vue'
 import $ from '@/global'
+import RoomInfo = Photon.LoadBalancing.RoomInfo
 
 const { t }: any = useI18n({ useScope: 'local' })
 
@@ -15,11 +16,29 @@ const props = defineProps({
 const emit = defineEmits(['close', 'created-room'])
 
 const gameName: Ref<string> = ref(($.isDebug && 'Smash Club') || '')
+const roomsList = ref([])
+
+const refreshRooms = () => {
+  const rooms = client.availableRooms()
+  roomsList.value = rooms.slice(0)
+  client.showAvailableRooms(rooms => {})
+}
 
 const createGame = () => {
   if (gameName.value.length < 3) {
     return
   }
+  refreshRooms()
+
+  if (
+    roomsList.value.find(
+      (room: RoomInfo) => room.name === gameName.value || room.getCustomProperties()?.hasMatchStarted
+    )
+  ) {
+    gameName.value += `-${Math.round(Math.random() * 1000)}`
+  }
+
+  console.log('gameName.value: ', gameName.value)
 
   client.createRoom(gameName.value, {
     maxPlayers: 8,
@@ -29,6 +48,15 @@ const createGame = () => {
   emit('close')
   emit('created-room', gameName.value)
 }
+
+watch(
+  () => props.show,
+  () => {
+    if (props.show) {
+      refreshRooms()
+    }
+  }
+)
 
 const onClose = () => {
   emit('close')

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const modelsList = [
   '/models/nature-fairy-1/preview_400x463.jpg',
@@ -70,6 +70,9 @@ const emitSelected = () => {
   const modelId = modelParts[2] || 'nature-fairy-1'
   emit('selected', modelId)
 }
+onMounted(() => {
+  emitSelected()
+})
 </script>
 
 <template lang="pug">

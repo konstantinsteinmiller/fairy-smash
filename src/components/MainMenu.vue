@@ -161,7 +161,7 @@ client.on('joinedLobby', () => {
         <CreateGameModal
           :show="isCreatGameModalOpen"
           @close="() => (isCreatGameModalOpen = false)"
-          @created-room="() => (console.log('created-room'), (isGameRoomOpen = true))"
+          @created-room="() => (isGameRoomOpen = true)"
         />
         <GameRoomModal
           :show="isGameRoomOpen"

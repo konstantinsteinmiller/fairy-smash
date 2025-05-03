@@ -1,4 +1,3 @@
-import AIController from '@/entity/AIController.ts'
 import ArenaPlayerController from '@/entity/ArenaPlayerController.ts'
 import { cleanupLevel } from '@/Game.ts'
 import $ from '@/global'
@@ -13,6 +12,11 @@ import RemoteController from '@/entity/RemoteController.ts'
 const Arena = async (level: string) => {
   World(level, () => {
     $.level.spawnPointMap = assetManager.assets.spawnPointMap
+    // const fairyPoseSPList = Array.from($.level.spawnPointMap)
+    //   ?.filter((sp: any) => {
+    //     return sp[1]?.type === ('pose' as SpawnPoint)
+    //   })
+    //   .map((sp: any) => sp[1])
 
     const actorsList = client.sortedActors || []
     const startingPositions: any[] = client.myRoom().getCustomProperties()?.startPositions
@@ -57,6 +61,9 @@ const Arena = async (level: string) => {
             previousMp: 50,
           },
           startPosition: new Vector3(startPos.x, startPos.y, startPos.z),
+          // startPosition: actor.customProperties.modelPath.includes('dragon-young')
+          //   ? new Vector3(-15.13, 23.43, 14.31)
+          //   : new Vector3(startPos.x, startPos.y, startPos.z),
           startRotation: startPos.quaternion,
           modelHeight: 1.8,
           guild: 'guild-0' as Guild,
@@ -80,15 +87,6 @@ const Arena = async (level: string) => {
         })
       }
     })
-
-    // AIController({
-    //   modelPath: '/models/nature-fairy-1/nature-fairy-1.fbx',
-    //   stats: { name: 'enemy' },
-    //   startPosition: new Vector3(startPos2.x, startPos2.y, startPos2.z),
-    //   startRotation: startPos2.quaternion,
-    //   modelHeight: 1.8,
-    //   guild: 'guild-1' as Guild,
-    // })
 
     Crosshair()
 

@@ -218,7 +218,6 @@ export default () => {
       refDist?: number
     }
   ) => {
-    console.log('$.sounds.isSoundLoaded(name): ', $.sounds.isSoundLoaded(name))
     if ($.sounds.isSoundLoaded(name)) {
       const sound = $.sounds
         .createSounds({
@@ -230,7 +229,6 @@ export default () => {
         .pop()
 
       sound.name = name
-      console.log('sound: ', sound)
       sound.play()
     }
   }
@@ -242,7 +240,6 @@ export default () => {
       soundNamesList.forEach((name: string) =>
         $.sounds.load(name, (event: any) => $.fileLoader.onFileProgress(name, event))
       )
-      console.log('singleton.trackBuffersMap: ', singleton.trackBuffersMap)
     }
   }
   singleton.loadBackgroundMusic = () => {

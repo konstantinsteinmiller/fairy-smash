@@ -9,6 +9,7 @@ const useUserDb = ({
   userPlayerName,
   userSoundVolume,
   userMusicVolume,
+  userMouseSensitivity,
   userLanguage,
   userFairyDust,
   userTutorialsDoneMap,
@@ -16,6 +17,7 @@ const useUserDb = ({
   userPlayerName: Ref<string>
   userSoundVolume: Ref<number>
   userMusicVolume: Ref<number>
+  userMouseSensitivity: Ref<number>
   userLanguage: Ref<string>
   userFairyDust: Ref<number>
   userTutorialsDoneMap: Ref<string>
@@ -47,6 +49,7 @@ const useUserDb = ({
     objectStore.createIndex('userPlayerName', 'userPlayerName', { unique: false })
     objectStore.createIndex('userSoundVolume', 'userSoundVolume', { unique: false })
     objectStore.createIndex('userMusicVolume', 'userMusicVolume', { unique: false })
+    objectStore.createIndex('userMouseSensitivity', 'userMouseSensitivity', { unique: false })
     objectStore.createIndex('userLanguage', 'userLanguage', { unique: false })
     objectStore.createIndex('userFairyDust', 'userFairyDust', { unique: false })
     objectStore.createIndex('userTutorialsDoneMap', 'userTutorialsDoneMap', { unique: false })
@@ -64,6 +67,7 @@ const useUserDb = ({
         userPlayerName.value = request.result.userPlayerName
         userSoundVolume.value = request.result.userSoundVolume
         userMusicVolume.value = request.result.userMusicVolume
+        userMouseSensitivity.value = request.result.userMouseSensitivity
         userLanguage.value = request.result.userLanguage
         if (request.result.userTutorialsDoneMap) {
           userTutorialsDoneMap.value = JSON.parse(request.result.userTutorialsDoneMap)
@@ -76,6 +80,7 @@ const useUserDb = ({
           userPlayerName: userPlayerName.value,
           userSoundVolume: +userSoundVolume.value,
           userMusicVolume: +userMusicVolume.value,
+          userMouseSensitivity: +userMouseSensitivity.value,
           userLanguage: userLanguage.value,
           userFairyDust: +userFairyDust.value,
           userTutorialsDoneMap: userTutorialsDoneMap.value,

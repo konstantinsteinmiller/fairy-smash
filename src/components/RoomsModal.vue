@@ -17,7 +17,9 @@ const roomsList: Ref<RoomInfo[]> = ref([])
 
 const refreshRooms = () => {
   const rooms = client.availableRooms()
-  roomsList.value = rooms.slice(0)
+  roomsList.value = rooms.slice(0).filter((room: RoomInfo) => {
+    return !room.getCustomProperties()?.hasMatchStarted
+  })
   client.showAvailableRooms(rooms => {})
   // console.log('availableRooms: ', rooms.map(x => x.name).join(', '), ` - My: ${client.myRoom().name}`)
   // client.showAvailableRooms((rooms: RoomInfo[]) => {

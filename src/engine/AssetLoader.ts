@@ -27,6 +27,8 @@ export const isPowerUpSP = (child: any) => child.name.startsWith('power_sp_')
 export const isBuffSP = (child: any) => child.name.startsWith('buff_sp_')
 export const isDustSP = (child: any) => child.name.startsWith('dust_sp_')
 export const isHealSP = (child: any) => child.name.startsWith('heal_sp_')
+export const isManaSP = (child: any) => child.name.startsWith('mana_sp_')
+export const isPoseSP = (child: any) => child.name.startsWith('pose_sp_')
 export const isSP = (child: any) => isPlayerSP(child) || isPowerUpSP(child) || isBuffSP(child) || isDustSP(child)
 
 const AssetManager = () => {
@@ -93,6 +95,10 @@ const AssetManager = () => {
                 type = 'dust' as SpawnPoint
               } else if (isHealSP(child)) {
                 type = 'heal' as SpawnPoint
+              } else if (isManaSP(child)) {
+                type = 'mana' as SpawnPoint
+              } else if (isPoseSP(child)) {
+                type = 'pose' as SpawnPoint
               }
 
               assets.spawnPointMap.set(child.name, {

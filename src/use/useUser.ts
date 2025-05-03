@@ -6,6 +6,7 @@ import { client } from '@/utils/mpClient.ts'
 
 const userSoundVolume: Ref<number> = ref(0.7)
 const userMusicVolume: Ref<number> = ref(0.05)
+const userMouseSensitivity: Ref<number> = ref(0.4)
 const userLanguage: Ref<string> = ref(navigator?.language?.split('-')[0] || 'en')
 const localStorageUserName = localStorage.getItem(GAME_USER_NAME_LABEL)
 const userPlayerName: Ref<string> = ref(localStorageUserName ?? `AwesomePlayer${Math.ceil(Math.random() * 1000)}`)
@@ -31,6 +32,7 @@ const useUser = () => {
     userPlayerName,
     userSoundVolume,
     userMusicVolume,
+    userMouseSensitivity,
     userLanguage,
     userFairyDust,
     userTutorialsDoneMap,
@@ -59,6 +61,7 @@ const useUser = () => {
       userPlayerName: userPlayerName.value,
       userSoundVolume: +userSoundVolume.value,
       userMusicVolume: +userMusicVolume.value,
+      userMouseSensitivity: +userMouseSensitivity.value,
       userLanguage: userLanguage.value,
       userFairyDust: +userFairyDust.value,
       userTutorialsDoneMap: userTutorialsDoneMap.value,
@@ -69,6 +72,7 @@ const useUser = () => {
     userPlayerName,
     userSoundVolume,
     userMusicVolume,
+    userMouseSensitivity,
     userLanguage,
     userFairyDust,
     userTutorialsDoneMap,

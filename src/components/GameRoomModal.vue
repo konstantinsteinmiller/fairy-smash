@@ -122,9 +122,14 @@ watch(
     if (props.show) {
       $.sounds.addAndPlaySound('hello', { volume: 0.55 * userSoundVolume.value * 1 })
       refreshRooms()
+      updateActors()
       setTimeout(() => {
         playerCount.value = client.myRoom().playerCount
       }, 300)
+
+      client.myRoom().setCustomProperties({
+        hasMatchStarted: false,
+      })
     }
   }
 )
@@ -138,7 +143,8 @@ watch(
         setReadyPlayersCount()
       }
     })
-  }
+  },
+  { immediate: true }
 )
 
 const startArena = () => {
@@ -149,6 +155,7 @@ const startArena = () => {
 const onStartGame = () => {
   client.myRoom().setCustomProperties({
     startPositions: getShuffledStartPositions(),
+    hasMatchStarted: true,
   })
 
   // pickPlayerModels()
@@ -157,7 +164,6 @@ const onStartGame = () => {
     message: `starting game`,
   })
   startArena()
-  // emit('close')
 }
 client.on('START_GAME', ({ data }: { data: { message: string } }) => {
   $.sounds.addAndPlaySound('go', { volume: 0.5 * userSoundVolume.value })

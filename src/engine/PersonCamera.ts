@@ -1,15 +1,17 @@
 import { STRAFE_ROT_VELOCITY } from '@/utils/constants.ts'
 import $ from '@/global'
 import { clamp } from 'three/src/math/MathUtils.js'
-import { Euler, MathUtils, Matrix4, Quaternion, Vector3 } from 'three'
+import { Matrix4, Quaternion, Vector3 } from 'three'
+import useUser from '@/use/useUser.ts'
 
 export default () => {
+  const { userMouseSensitivity } = useUser()
   const rotation = new Quaternion()
   const translation = new Vector3(0, 1, 0)
   let phi = 0
   let theta = 0
-  const phiSpeed = 8
-  const thetaSpeed = 5
+  let phiSpeed = 8 * userMouseSensitivity.value
+  let thetaSpeed = 5 * userMouseSensitivity.value
   let isHeadBobActive = false
   let headBobTimer = 0
 
@@ -56,6 +58,9 @@ export default () => {
   }
 
   const updateCamera = () => {
+    phiSpeed = 8 * userMouseSensitivity.value
+    thetaSpeed = 5 * userMouseSensitivity.value
+
     if ($.isMenu?.value) {
       updateMenuCamera()
       return
@@ -161,7 +166,7 @@ export default () => {
     /* apply some speed constant to get an angle in radians [0, 2 PI],
      * but don't allow user to rotate too far up or too far down
      * -> [-60°, 60°] or [-PI/3, PI/3] in radians */
-    theta = clamp(theta + ($.controls.lookBack ? -1 : 1) * yh * thetaSpeed, -Math.PI / 3, Math.PI / 3)
+    theta = clamp(theta + ($.controls.lookBack ? -1 : 1) * yh * thetaSpeed, -Math.PI / 4, Math.PI / 4)
 
     /* (0, 1, 0) is Up Vector / y positive Vector and rotate it by phi,
      *  so setFromAxisAngle uses following formula:

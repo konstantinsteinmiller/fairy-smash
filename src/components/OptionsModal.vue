@@ -22,17 +22,22 @@
               class="text-white focus:text-white rounded-3xl leading-[1rem] w-full"
               @input="onInput(item.name, item.value)"
             />
-            <input
+            <div
               v-if="item.type === 'range'"
-              v-model="item.value"
-              min="0"
-              max="1"
-              step="0.01"
-              type="range"
-              class="text-red-700 w-full"
-              :style="`--range-value:${item.value}`"
-              @input="onInput(item.name, item.value)"
-            />
+              class="flex justify-between items-center w-full"
+            >
+              <input
+                v-model="item.value"
+                :min="item.min ?? 0"
+                :max="item.max ?? 1"
+                step="0.01"
+                type="range"
+                class="text-red-700 w-full"
+                :style="`--range-value:${item.value}`"
+                @input="onInput(item.name, item.value)"
+              />
+              <div class="w-12 text-sm text-white">{{ item.value }}</div>
+            </div>
             <XSelect
               v-if="item.type === 'select' && item.items"
               v-model="item.value"
@@ -70,7 +75,15 @@ import XInput from '@/components/atoms/XInput.vue'
 
 const { t }: any = useI18n({ useScope: 'local' })
 const { locale }: any = useI18n({ useScope: 'global' })
-const { userPlayerName, userSoundVolume, userMusicVolume, userLanguage, allowTutorial, setSettingValue } = useUser()
+const {
+  userPlayerName,
+  userSoundVolume,
+  userMusicVolume,
+  userMouseSensitivity,
+  userLanguage,
+  allowTutorial,
+  setSettingValue,
+} = useUser()
 
 defineProps({
   show: Boolean,
@@ -116,6 +129,13 @@ const itemsList = ref([
     value: userMusicVolume,
   },
   {
+    name: 'mouseSensitivity',
+    type: 'range',
+    value: userMouseSensitivity,
+    min: 0,
+    max: 3,
+  },
+  {
     name: 'language',
     type: 'select',
     value: userLanguage,
@@ -139,8 +159,10 @@ const onClose = () => {
 <i18n>
 en:
   title: "Options"
+  playerName: "Player Name"
   soundVolume: "Game Sound"
   musicVolume: "Music"
+  mouseSensitivity: "Mouse Sensitivity"
   tutorial: "Tutorial"
   allowTutorial: "Reset Tutorial"
   language: "Language"
@@ -165,8 +187,10 @@ en:
   ar: "Arabic"
 de:
   title: "Einstellungen"
+  playerName: "Spieler Name"
   soundVolume: "Sound"
   musicVolume: "Musik"
+  mouseSensitivity: "Maus Sensitivität"
   tutorial: "Tutorial"
   allowTutorial: "Tutorial zurücksetzen"
   language: "Sprache"
