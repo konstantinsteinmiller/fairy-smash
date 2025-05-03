@@ -79,10 +79,9 @@ onUnmounted(() => {
 })
 
 const showJoinRoom: Ref<boolean> = ref(false)
-const { userPlayerName } = useUser()
 client.on('joinedLobby', () => {
+  $.sounds.loadSounds()
   const localStorageUserName = localStorage.getItem(GAME_USER_NAME_LABEL)
-  // const userPlayerName: Ref<string> = ref()
   // console.log('joined lobby')
   client.myActor().setName(localStorageUserName ?? `AwesomePlayer${Math.ceil(Math.random() * 1000)}`)
   showJoinRoom.value = true

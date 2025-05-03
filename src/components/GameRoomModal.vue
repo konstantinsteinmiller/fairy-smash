@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import VModal from '@/components/atoms/VModal.vue'
-import { computed, onBeforeUnmount, type Ref, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, type Ref, ref, watch } from 'vue'
 import XButton from '@/components/atoms/XButton.vue'
 import { client } from '@/utils/mpClient.ts'
 import { MP_EVENTS } from '@/utils/enums.ts'
@@ -10,11 +10,14 @@ import { useRoute, useRouter } from 'vue-router'
 import useMatch from '@/use/useMatch.ts'
 import { getShuffledStartPositions } from '@/utils/room.ts'
 import CharacterSlider from '@/components/organism/CharacterSlider.vue'
+import useUser from '@/use/useUser.ts'
+import $ from '@/global.ts'
 
 const { t }: any = useI18n({ useScope: 'local' })
 const router = useRouter()
 const route = useRoute()
 const { isStartingGame } = useMatch()
+const { userSoundVolume } = useUser()
 
 const props = defineProps({
   show: Boolean,
@@ -29,8 +32,6 @@ const onClose = () => {
 
 const isReady: Ref<boolean> = ref(false)
 const readyMap: Ref<Map<number, boolean>> = ref(new Map())
-// isPlayerReady
-// readyMap.value.get(player?.actorNr)
 
 const updateActors = () => {
   setTimeout(() => {
@@ -119,6 +120,7 @@ watch(
   () => props.show,
   () => {
     if (props.show) {
+      $.sounds.addAndPlaySound('hello', { volume: 0.55 * userSoundVolume.value * 1 })
       refreshRooms()
       setTimeout(() => {
         playerCount.value = client.myRoom().playerCount
@@ -150,7 +152,7 @@ const onStartGame = () => {
   })
 
   // pickPlayerModels()
-
+  $.sounds.addAndPlaySound('go', { volume: userSoundVolume.value * 0.5 })
   client.raiseEvent(MP_EVENTS.START_GAME, {
     message: `starting game`,
   })
@@ -158,6 +160,7 @@ const onStartGame = () => {
   // emit('close')
 }
 client.on('START_GAME', ({ data }: { data: { message: string } }) => {
+  $.sounds.addAndPlaySound('go', { volume: 0.5 * userSoundVolume.value })
   startArena()
 })
 const onSelectedFairy = (modelId: string) => {

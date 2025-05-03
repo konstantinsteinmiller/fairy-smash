@@ -45,7 +45,6 @@ const selectAll = (node: any) => {
 const inputRef = useTemplateRef('input-ref')
 props.autofocus &&
   onMounted(() => {
-    console.log('gameNameRef.value?.focus: ', inputRef.value, inputRef.value?.focus)
     inputRef.value?.focus()
   })
 </script>

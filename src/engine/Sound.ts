@@ -14,6 +14,8 @@ export const soundToTrackSrcMap: { [key: string]: string[] } = {
   flap: repeat(4, (_, i) => prependBaseUrl(`/sounds/fly/flying-flap-${i + 1}.ogg`)),
   death: repeat(3, (_, i) => prependBaseUrl(`/sounds/death/death-${i + 1}.ogg`)),
   cough: repeat(3, (_, i) => prependBaseUrl(`/sounds/cough/cough-female-${i + 1}.ogg`)),
+  go: repeat(4, (_, i) => prependBaseUrl(`/sounds/go/go-${i + 1}.ogg`)),
+  hello: repeat(2, (_, i) => prependBaseUrl(`/sounds/hello/hello-${i + 1}.ogg`)),
   buff: [prependBaseUrl('/sounds/item/power-up-1.ogg'), prependBaseUrl('/sounds/item/power-up-2.ogg')],
   heal: [prependBaseUrl('/sounds/item/heal.ogg')],
   powerUp: [prependBaseUrl('/sounds/item/power-up-perm.ogg')],
@@ -182,6 +184,7 @@ export default () => {
       }
     }
   }
+
   singleton.addAndPlayPositionalSound = (
     entity: any,
     name: string,
@@ -207,6 +210,31 @@ export default () => {
     }
   }
 
+  singleton.addAndPlaySound = (
+    name: string,
+    options: {
+      volume: number
+      loop?: boolean
+      refDist?: number
+    }
+  ) => {
+    console.log('$.sounds.isSoundLoaded(name): ', $.sounds.isSoundLoaded(name))
+    if ($.sounds.isSoundLoaded(name)) {
+      const sound = $.sounds
+        .createSounds({
+          name,
+          volume: options?.volume || 0.7,
+          refDist: options?.refDist || 150,
+          random: true,
+        })
+        .pop()
+
+      sound.name = name
+      console.log('sound: ', sound)
+      sound.play()
+    }
+  }
+
   singleton.loadSounds = () => {
     const soundNamesList = Object.keys(soundToTrackSrcMap)
 
@@ -214,6 +242,7 @@ export default () => {
       soundNamesList.forEach((name: string) =>
         $.sounds.load(name, (event: any) => $.fileLoader.onFileProgress(name, event))
       )
+      console.log('singleton.trackBuffersMap: ', singleton.trackBuffersMap)
     }
   }
   singleton.loadBackgroundMusic = () => {
