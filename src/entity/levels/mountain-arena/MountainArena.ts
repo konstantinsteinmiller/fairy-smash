@@ -1,16 +1,10 @@
-// import FairyDust from '@/entity/FairyDust.ts'
 import FleeOrb from '@/entity/levels/FleeOrb.ts'
 import AttackPowerUp from '@/entity/power-ups/AttackPowerUp'
 import DefensePowerUp from '@/entity/power-ups/DefensePowerUp'
 import $ from '@/global'
-import {
-  portalConnectionsList,
-  orientationPosition,
-  portalTransitionMap,
-  coverPositions,
-} from '@/entity/levels/mountain-arena/config'
+import { orientationPosition } from '@/entity/levels/mountain-arena/config'
 import AssetLoader, { assetManager, loadNavMesh } from '@/engine/AssetLoader'
-import { BoxGeometry, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three'
+import { Object3D, Vector3 } from 'three'
 import { createCollidersForGraph } from '@/utils/physics'
 import { Pathfinding, PathfindingHelper } from 'three-pathfinding'
 import type { SpawnPoint } from '@/types/world.ts'
@@ -26,10 +20,7 @@ export default async (onFinishedCallback: () => void) => {
   mountainArena.spawnPointMap = assetManager.assets?.spawnPointMap
 
   const pathfinder: any = new Pathfinding()
-  pathfinder.portalConnectionsList = portalConnectionsList
-  pathfinder.portalTransitionMap = portalTransitionMap
   pathfinder.orientationPosition = orientationPosition
-  pathfinder.coverPositions = coverPositions
   pathfinder.startPositions = Array.from(mountainArena.spawnPointMap)
     ?.filter((sp: any) => {
       return sp[1]?.type === ('player' as SpawnPoint)
@@ -50,42 +41,12 @@ export default async (onFinishedCallback: () => void) => {
     })
     mountainArena.isBattleProtected = true
 
-    if ($.enableDebug) {
-      const wiredNavMesh = new Mesh(geo, new MeshBasicMaterial({ color: 0x202020, wireframe: true }))
-      $.scene.add(wiredNavMesh)
-      const wiredFillMesh = new Mesh(
-        geo,
-        new MeshBasicMaterial({
-          color: 0xffffff,
-          opacity: 0.5,
-          transparent: true,
-        })
-      )
-      $.scene.add(wiredFillMesh)
-    }
     $.scene.add(pathfinder.pathfindingHelper)
   })
 
   /* add flee point */
   const fleePoint = new Vector3(0, 28, 0)
   FleeOrb(fleePoint)
-
-  const coverBoxGeometry = new BoxGeometry(0.5, 0.5, 0.5)
-  coverBoxGeometry.computeBoundingBox()
-  coverBoxGeometry.computeBoundingSphere()
-
-  /*
-  Debugging Cover Positions
-  coverPositions.forEach((cover: any) => {
-    const coverPos = new Vector3(cover.x, cover.y + 0.9, cover.z)
-
-    const coverBoxMaterial = new MeshStandardMaterial({ color: 0xf0df00 })
-    const coverBox = new Mesh(coverBoxGeometry, coverBoxMaterial)
-    coverBox.position.copy(coverPos)
-    coverBox.name = 'cover'
-    mountainArena.add(coverBox)
-    $.scene.updateMatrixWorld(true)
-  })*/
 
   createCollidersForGraph(mountainArena, 'fixed', undefined, 0 /*Math.PI / 2*/)
   mountainArena.name = 'MountainArenaContainer'
@@ -140,15 +101,13 @@ export default async (onFinishedCallback: () => void) => {
     })
     .map((sp: any) => sp[1]?.position)
 
-  fairyDustSpawnPointsList.forEach((spPos: any) => {
+  fairyDustSpawnPointsList.forEach((spPos: any, index) => {
+    if (index % 2 === 1) return
     FairyDust({ position: new Vector3().copy(spPos), fixed: true })
   })
 
   $.scene.add(mountainArena)
   $.level = mountainArena
-
-  // FairyDust({ position: new Vector3(9.5, -2.1, 7) })
-  // FairyDust({ position: new Vector3(8, 5, 2.4) })
 
   onFinishedCallback()
 

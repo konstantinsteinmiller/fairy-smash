@@ -78,7 +78,6 @@ export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) 
   if (removeVfx) {
     $.vfxList.forEach(({ /*name, */ vfxRenderer, nebulaSystem }: any) => {
       setTimeout(() => {
-        // console.log('name: ', name)
         destroyVfx({ nebulaSystem: nebulaSystem, vfxRenderer })
       }, 3000)
     })

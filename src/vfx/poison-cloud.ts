@@ -3,9 +3,9 @@ import $ from '@/global'
 import { AdditiveBlending, Group, Sprite, SpriteMaterial } from 'three'
 
 const particles: Sprite[] = []
-let particleCount = 500 // Initial particle count
-const initialParticleCount = 500 // Initial particle count
-const maxParticleCount = 3000 // Maximum particle count
+let particleCount = 50 // Initial particle count
+const initialParticleCount = 50 // Initial particle count
+const maxParticleCount = 300 // Maximum particle count
 let startTime = Date.now() // Track the start time for the radius decrease
 const totalDuration = 5 * 60 * 1000 // 5 minute in milliseconds (adjustable)
 

@@ -298,7 +298,7 @@ export default (entity?: any) => {
 export function spraySprincles(event: MouseEvent) {
   const { clientX, clientY } = event
   Confetti({
-    particleCount: 25,
+    particleCount: 8,
     shapes: ['star'],
     angle: 155,
     startVelocity: 3.5,

@@ -48,10 +48,14 @@ import { useRoute } from 'vue-router'
 import { GAME_LAST_ROOM } from '@/utils/constants.ts'
 import { client } from '@/utils/mpClient.ts'
 import DamageNumber from '@/components/atoms/DamageNumber.vue'
+import addPerformanceStats from '@/utils/stats'
 
 useMatch()
 const route = useRoute()
 
+if ($.isDebug) {
+  addPerformanceStats()
+}
 const worldId: Ref<string> = ref(route.params.worldId)
 
 const isBattleOver: Ref<boolean> = ref(!!$?.isBattleOver)

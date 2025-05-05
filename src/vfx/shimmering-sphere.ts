@@ -10,7 +10,7 @@ const goldColors = [
   0xb8860b, // Dark goldenrod
 ]
 // const grey = '#9f5bdc'
-const particleCount = 350 // Number of particles
+const particleCount = 30 // Number of particles
 // let sphereRadius = 0.65 // Radius of the sphere
 const shimmerSpeed = 0.025 // Speed of the shimmering effect
 
@@ -62,7 +62,7 @@ export const startShimmeringSphere = ({
     const particle = new Sprite(particleMaterial)
 
     // Set the initial scale of the sprites
-    const initialScale = 0.03 + Math.random() * 0.015 // Smaller scale between 0.03 and 0.045
+    const initialScale = 0.06 + Math.random() * 0.015 // Smaller scale between 0.03 and 0.045
     particle.scale.set(initialScale, initialScale, initialScale)
 
     // Disable raycasting for this sprite
@@ -112,7 +112,7 @@ export const startShimmeringSphere = ({
     // Define scaling parameters
     const minDistance = 5 // Minimum distance for scaling
     const maxDistance = 30 // Maximum distance for scaling
-    const minScale = 5.5 // Minimum scale factor
+    const minScale = 2.5 // Minimum scale factor
     const maxScale = 1.0 // Maximum scale factor
 
     // Calculate the scale factor based on distance

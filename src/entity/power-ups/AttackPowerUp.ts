@@ -7,7 +7,7 @@ export default (position: Vector3) => {
 
   const collidable: any = CollidableItem({
     name: 'attack-power-up',
-    meshPath: '/models/items/power-ups/swords.comp.glb',
+    meshPath: '/models/items/power-ups-low-poly/swords.comp.glb',
     size: 0.4,
     onCollisionStart: (colliderA, colliderB, uuid, entity) => {
       /* on collide buff logic */

@@ -18,7 +18,7 @@ const emit = defineEmits(['close', 'created-room'])
 
 const gameName: Ref<string> = ref(($.isDebug && 'Smash Club') || '')
 const roomsList = ref([])
-const isOverDrive: Ref<boolean> = ref(false)
+const isOverDrive: Ref<boolean> = ref(true)
 
 const refreshRooms = () => {
   const rooms = client.availableRooms()

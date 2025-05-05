@@ -42,8 +42,8 @@ export default () => {
 
     while (accumulatedTime >= FIXED_TIME_STEP) {
       /* safeguard from freezing screen on missed animation frames */
-      if (accumulatedTime > FIXED_TIME_STEP * 15) {
-        accumulatedTime = FIXED_TIME_STEP * 5
+      if (accumulatedTime > FIXED_TIME_STEP * 10) {
+        accumulatedTime = FIXED_TIME_STEP * 3
       }
       $.oneTimeEventsList.forEach(({ eventName, callback, cleanup }: any) => {
         if (eventName === 'renderer.update') {

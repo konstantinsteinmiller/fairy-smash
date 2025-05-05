@@ -61,7 +61,7 @@ export const onUnlockedMouseMove = (event: any) => {
 
   counter++
   /* sprinkles trail */
-  counter % 2 === 0 &&
+  counter % 4 === 0 &&
     Confetti({
       particleCount: 1,
       shapes: ['star'],

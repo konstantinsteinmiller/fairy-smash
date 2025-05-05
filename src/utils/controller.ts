@@ -394,18 +394,6 @@ const AGENT_SAFE_CHARGE_LEVEL = 0.3
 const AGENT_CRITICAL_CHARGE_LEVEL = 0.7
 const RAYCAST_FRAME_INTERVAL = 400
 let lastRaycastTime = Date.now()
-const coverPointsWorker = new Worker(new URL('@/webworkers/coverPointsWorker.ts', import.meta.url), { type: 'module' })
-
-function extractWorldGeometry() {
-  const geo = $.level?.children[0].geometry
-  const vertices = new Float32Array(geo.attributes.position.array)
-  const indices = new Uint32Array(geo.index.array)
-
-  return {
-    vertices,
-    indices,
-  }
-}
 
 export const controllerAwarenessUtils = () => ({
   detectCriticalCharge: (entity: any): boolean => {
@@ -458,86 +446,4 @@ export const controllerAwarenessUtils = () => ({
 
     return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: entity.lastCanSeeEnemy }
   },
-  findCoverPosition: (entity: any, enemy: any): Promise<Vector3> => {
-    return new Promise((resolve, reject) => {
-      const { coverPositions } = $.level.pathfinder
-      const world = extractWorldGeometry()
-
-      // const bestCover = raycastDebug({ entity, enemy })
-      // return resolve(bestCover as Vector3)
-
-      coverPointsWorker.postMessage({
-        coverPositions,
-        enemyPosition: { x: enemy.mesh.position.x, y: enemy.mesh.position.y, z: enemy.mesh.position.z },
-        enemyHalfHeight: enemy.halfHeight,
-        entityPosition: { x: entity.mesh.position.x, y: entity.mesh.position.y, z: entity.mesh.position.z },
-        entityHalfHeight: entity.halfHeight,
-        world,
-      })
-
-      coverPointsWorker.onmessage = function (event: any) {
-        const { bestCover } = event.data
-        $.enableDebug && bestCover && console.log('bestCover: ', bestCover)
-        if (bestCover) {
-          // Add a green box at the cover position
-          $.enableDebug && createDebugBox(bestCover)
-
-          resolve(bestCover as Vector3)
-        } else {
-          reject(null)
-        }
-      }
-    })
-  },
 })
-
-const raycaster = new Raycaster()
-
-function raycastDebug(data: any) {
-  const { enemy, entity } = data
-  const { coverPositions } = $.level.pathfinder
-
-  const enemyPos = new Vector3().copy(enemy.mesh.position)
-  enemyPos.setY(enemyPos.y + enemy.halfHeight)
-  const entityPos = new Vector3().copy(entity.mesh.position)
-  entityPos.setY(entityPos.y + entity.halfHeight)
-
-  /* find the distance from entity to the coverPositions*/
-
-  const coverPointsWithCoverPointsList = coverPositions
-    .map((cover: any) => {
-      const coverPos = new Vector3(cover.x, cover.y, cover.z)
-      const distance = entityPos.distanceTo(coverPos)
-
-      return { ...cover, distance }
-    })
-    .sort((a: any, b: any) => a.distance - b.distance)
-  $.scene.updateMatrixWorld(true)
-
-  /* start raycasting from the closests, if one is blocked -> a cover position is found */
-  const bestCCover = coverPointsWithCoverPointsList.find((cover: any) => {
-    const coverPos = new Vector3(cover.x, cover.y + 0.9, cover.z)
-
-    const directionN = new Vector3().subVectors(coverPos, enemyPos).normalize()
-    raycaster.set(enemyPos, directionN)
-
-    /* TODO: FIIIXXX THIS BRAAHHH */
-    const intersects = raycaster.intersectObjects($.scene.children[5].children, true)
-
-    if (intersects.length > 0) {
-      const foundCover = intersects.find(intersect => intersect.object?.name === 'cover')
-      if (intersects?.[0].object?.name !== 'cover' && foundCover) {
-        console.log('foundCover: ', foundCover)
-        foundCover.object.material.color.set(0xff0055)
-        return cover
-      }
-      foundCover.object.material.color.set(0xf0df00)
-
-      for (const intersect of intersects) {
-        createRayTrace(intersect.point)
-      }
-    }
-  })
-  console.log('bestCCover: ', bestCCover)
-  return bestCCover
-}

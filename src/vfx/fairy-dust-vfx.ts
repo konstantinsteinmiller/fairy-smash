@@ -9,7 +9,7 @@ const goldColors = [
   0xdaa520, // Goldenrod
   0xb8860b, // Dark goldenrod
 ]
-const particleCount = 40 // Number of particles
+const particleCount = 20 // Number of particles
 const sphereRadius = 0.15 // Radius of the sphere
 const shimmerSpeed = 0.025 // Speed of the shimmering effect
 const lifeTime = 15000 // Lifetime of the particle system in milliseconds

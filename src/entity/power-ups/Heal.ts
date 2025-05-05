@@ -16,7 +16,7 @@ export default (position: Vector3) => {
 
   const collidable: any = CollidableItem({
     name: 'heal',
-    meshPath: '/models/items/power-ups/heal.comp.glb',
+    meshPath: '/models/items/power-ups-low-poly/heal.comp.glb',
     size: 0.2,
     onCollisionStart: (colliderA, colliderB, uuid, entity) => {
       if (entity) {

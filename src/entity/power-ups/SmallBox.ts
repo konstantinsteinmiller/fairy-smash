@@ -13,7 +13,7 @@ export default ({ position, onlyInteractableByGuild, fixed }: CollidableItemProp
 
   const collidable: any = CollidableItem({
     name: 'small power up box',
-    meshPath: '/models/items/power-ups/power-up.comp.glb',
+    meshPath: '/models/items/power-ups-low-poly/power-up.comp.glb',
     size: 0.2,
     onCollisionStart: (collider, otherCollider, uuid, entity: any) => {
       entity.currency.powerUp += 1
