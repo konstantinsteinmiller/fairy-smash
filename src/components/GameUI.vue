@@ -64,9 +64,16 @@ const fledGame: Ref<boolean> = ref(false)
 const enemyActorsList = client.actorsArray.filter(actor => actor.actorNr !== client.myActor().actorNr)
 
 onMounted(async () => {
+  const startTime = performance.now()
   await Game(worldId.value)
 
   const updateUuid = $.addEvent('renderer.update', () => {
+    const currentTime = performance.now()
+    const elapsedTime = (currentTime - startTime) / 1000
+    /* give min 15 sec for loading in */
+    if (elapsedTime < 15) {
+      return
+    }
     const haveMyFled = !!client.myActor().getCustomProperties()?.hasFled
     const isDead = client?.myActor()?.getCustomProperties()?.isDead
 
